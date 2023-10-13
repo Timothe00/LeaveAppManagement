@@ -18,5 +18,7 @@ namespace LeaveAppManagement.dataAccess.Data
         {
             optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
         }
+
+
     }
 }
