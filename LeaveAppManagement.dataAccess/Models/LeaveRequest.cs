@@ -6,9 +6,9 @@ namespace LeaveAppManagement.dataAccess.Models
     {
         public int Id { get; set; }
         public DateTime DateRequest { get; set; }
+        public int NumberOfDays { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
-        public int NumberOfDays { get; set; }
         public string Type { get; set; } = string.Empty;
         public string Justification { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
@@ -18,5 +18,7 @@ namespace LeaveAppManagement.dataAccess.Models
 
         public int EmployeeId { get; set; }
         public Employee? Employee { get; set; }
+
+        public virtual ICollection<LeaveCalendar> LeaveCalendar { get; set; }
     }
 }
