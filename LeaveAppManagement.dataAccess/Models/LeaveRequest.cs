@@ -19,6 +19,7 @@ namespace LeaveAppManagement.dataAccess.Models
         public int EmployeeId { get; set; }
         public Employee? Employee { get; set; }
 
-        public virtual ICollection<LeaveCalendar> LeaveCalendar { get; set; }
+        public int LeaveCalendarId { get; set; }
+        public LeaveCalendar? LeaveCalendar { get; set; }
     }
 }

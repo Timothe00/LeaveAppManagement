@@ -14,13 +14,14 @@ namespace LeaveAppManagement.dataAccess.Data
         public DbSet<LeaveBalance> TLeaveBalance { get; set; }
         public DbSet<LeaveCalendar> TLeaveCalendars { get; set; }
         public DbSet<LeaveRequest> TLeaveRequest { get; set; }
-        public DbSet<CalendarRequest> TCalendarRequests { get; set; }
+        public DbSet<UserRole>? TUserRoles { get; set; }
+        public DbSet<Role> TRole { get; set; }
 
-        public LeaveAppManagementDbContext(DbContextOptions<DbContext> options) : base(options) { }
+        public LeaveAppManagementDbContext(DbContextOptions<LeaveAppManagementDbContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-55C3RNF\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,15 +66,29 @@ namespace LeaveAppManagement.dataAccess.Data
             });
 
 
-            modelBuilder.Entity<LeaveCalendar>()
-            .HasMany(lc => lc.LeaveRequests)
-            .WithMany(lr => lr.LeaveCalendar)
-            .Map(cs =>
+            modelBuilder.Entity<LeaveCalendar>(l =>
             {
-                cs.MapLeftKey("LeaveCalendarId");
-                cs.MapRightKey("LeaveRequestId");
-                cs.ToTable("CalendarRequest");
+                l.HasKey(pk => pk.Id);
+                l.HasMany(lc => lc.LeaveRequests)
+                .WithOne(lr => lr.LeaveCalendar)
+                .HasForeignKey(lr => lr.LeaveCalendarId)
+                .OnDelete(DeleteBehavior.ClientCascade);
             });
+
+
+            // Configuration de la relation many-to-many entre User et Role via UserRole
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Users)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
 
 
         }

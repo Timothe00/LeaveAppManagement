@@ -6,7 +6,6 @@ namespace LeaveAppManagement.dataAccess.Models
     public class Employee : Users
     {
         public ICollection<LeaveRequest>? LeaveRequests { get; set; }
-
         public int LeaveBalanceId { get; set; }
         public LeaveBalance? LeaveBalance { get; set; }
     }
