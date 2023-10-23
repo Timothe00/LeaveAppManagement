@@ -33,31 +33,28 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("LeaveBalanceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LeaveBalancesId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotaLeaveAvailable")
                         .HasColumnType("int");
 
                     b.Property<int>("TotalCurrentLeave")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique();
-
-                    b.ToTable("TLeaveBalance");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveCalendar", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("Years")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TLeaveCalendars");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("LeaveBalancesId");
+
+                    b.ToTable("LeaveBalances");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveRequest", b =>
@@ -84,7 +81,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LeaveCalendarId")
+                    b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("ManagerId")
@@ -97,22 +94,18 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("LeaveCalendarId");
+                    b.HasIndex("LeaveTypeId");
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("TLeaveRequest");
+                    b.ToTable("LeaveRequests");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,9 +113,18 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("LeaveTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("TManager", (string)null);
+                    b.HasIndex("LeaveTypeId");
+
+                    b.ToTable("LeaveTypes");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Role", b =>
@@ -134,26 +136,15 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TRole");
-                });
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.UserRole", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("TUserRoles");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Users", b =>
@@ -164,11 +155,19 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
+                    b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Job")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -182,131 +181,133 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TUsers", (string)null);
+                    b.HasIndex("Email")
+                        .IsUnique();
 
-                    b.UseTptMappingStrategy();
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Users");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Admin", b =>
                 {
                     b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
 
-                    b.ToTable("TAdmin", (string)null);
+                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
                 {
                     b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
 
-                    b.Property<int>("LeaveBalanceId")
-                        .HasColumnType("int");
+                    b.HasDiscriminator().HasValue("Employee");
+                });
 
-                    b.ToTable("TEmployee", (string)null);
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
+                {
+                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
+
+                    b.HasDiscriminator().HasValue("Manager");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveBalance", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employee")
-                        .WithOne("LeaveBalance")
-                        .HasForeignKey("LeaveAppManagement.dataAccess.Models.LeaveBalance", "EmployeeId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employees")
+                        .WithMany("LeaveBalances")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveBalance", "LeaveBalances")
+                        .WithMany()
+                        .HasForeignKey("LeaveBalancesId");
+
+                    b.Navigation("Employees");
+
+                    b.Navigation("LeaveBalances");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveRequest", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employee")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employees")
                         .WithMany("LeaveRequests")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveCalendar", "LeaveCalendar")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveType", "LeaveTypes")
+                        .WithMany()
+                        .HasForeignKey("LeaveTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", "Managers")
                         .WithMany("LeaveRequests")
-                        .HasForeignKey("LeaveCalendarId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", "Manager")
-                        .WithMany("LeaveRequestPending")
                         .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
+                    b.Navigation("Employees");
 
-                    b.Navigation("LeaveCalendar");
+                    b.Navigation("LeaveTypes");
 
-                    b.Navigation("Manager");
+                    b.Navigation("Managers");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.UserRole", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveType", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Role", "Role")
-                        .WithMany("UserRoles")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveType", null)
+                        .WithMany("LeaveTypes")
+                        .HasForeignKey("LeaveTypeId");
+                });
+
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Users", b =>
+                {
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Role", "Roles")
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Users", "Users")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Users");
+                    b.Navigation("Roles");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Admin", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveType", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Users", null)
-                        .WithOne()
-                        .HasForeignKey("LeaveAppManagement.dataAccess.Models.Admin", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("LeaveTypes");
+                });
+
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Users", null)
-                        .WithOne()
-                        .HasForeignKey("LeaveAppManagement.dataAccess.Models.Employee", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    b.Navigation("LeaveBalances");
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveCalendar", b =>
-                {
                     b.Navigation("LeaveRequests");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
                 {
-                    b.Navigation("LeaveRequestPending");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Role", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Users", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
-                {
-                    b.Navigation("LeaveBalance");
-
                     b.Navigation("LeaveRequests");
                 });
 #pragma warning restore 612, 618

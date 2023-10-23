@@ -7,89 +7,56 @@ namespace LeaveAppManagement.dataAccess.Data
     public class LeaveAppManagementDbContext : DbContext
     {
         //my entities
-        public DbSet<Users> TUsers { get; set; }
-        public DbSet<Employee> TEmployee { get; set; }
-        public DbSet<Manager> TManager { get; set; }
-        public DbSet<Admin> TAdmin { get; set; }
-        public DbSet<LeaveBalance> TLeaveBalance { get; set; }
-        public DbSet<LeaveCalendar> TLeaveCalendars { get; set; }
-        public DbSet<LeaveRequest> TLeaveRequest { get; set; }
-        public DbSet<UserRole>? TUserRoles { get; set; }
-        public DbSet<Role> TRole { get; set; }
+        public DbSet<Users> Users { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Manager> Managers { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<LeaveBalance> LeaveBalances { get; set; }
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         public LeaveAppManagementDbContext(DbContextOptions<LeaveAppManagementDbContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-55C3RNF\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Users>().ToTable("TUsers");
-            modelBuilder.Entity<Employee>().ToTable("TEmployee");
-            modelBuilder.Entity<Manager>().ToTable("TManager");
-            modelBuilder.Entity<Admin>().ToTable("TAdmin");
 
             // Configuration de la relation Many-To-One entre DemandeConge et Employe
-            modelBuilder.Entity<LeaveRequest>(l => {
-                l.HasKey(s => s.Id);
-
-                l.HasOne(lr => lr.Employee)
-                .WithMany(e => e.LeaveRequests)
-                .HasForeignKey(fk => fk.EmployeeId)
-                .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<Users>(u => {
+                u.HasKey(pk => pk.Id);
+                u.HasIndex(e => e.Email).IsUnique();
+                u.HasIndex(p => p.PhoneNumber).IsUnique();
             });
 
 
             // Configuration de la relation Many-To-One entre DemandeConge et Gestionnaire
-            modelBuilder.Entity<LeaveRequest>(l =>
+            modelBuilder.Entity<Role>(u =>
             {
-                l.HasKey(pk => pk.Id);
-
-                l.HasOne(lr => lr.Manager)
-                .WithMany(m => m.LeaveRequestPending)
-                .HasForeignKey(fk => fk.ManagerId)
-                .OnDelete(DeleteBehavior.ClientCascade);
+                u.HasKey(pk => pk.Id);
+                u.HasIndex(r => r.Name).IsUnique();
             });
 
 
             // Configuration de la relation One-To-One entre Employe et SoldeConge
-            modelBuilder.Entity<LeaveBalance>(l =>
+            modelBuilder.Entity<LeaveBalance>(lb =>
             {
-                l.HasKey(pk => pk.Id);
-                l.HasOne(lb => lb.Employee)
-                .WithOne(e => e.LeaveBalance)
-                .HasForeignKey<LeaveBalance>(fk => fk.EmployeeId)
-                .OnDelete(DeleteBehavior.ClientCascade);
-
+                lb.HasKey(pk => pk.Id);
             });
 
-
-            modelBuilder.Entity<LeaveCalendar>(l =>
+            modelBuilder.Entity<LeaveRequest>(lr =>
             {
-                l.HasKey(pk => pk.Id);
-                l.HasMany(lc => lc.LeaveRequests)
-                .WithOne(lr => lr.LeaveCalendar)
-                .HasForeignKey(lr => lr.LeaveCalendarId)
-                .OnDelete(DeleteBehavior.ClientCascade);
+                lr.HasKey(pk => pk.Id);
             });
 
-
-            // Configuration de la relation many-to-many entre User et Role via UserRole
-            modelBuilder.Entity<UserRole>()
-                .HasKey(ur => new { ur.UserId, ur.RoleId });
-
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Users)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId);
-
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId);
-
+            modelBuilder.Entity<LeaveType>(lt =>
+            {
+                lt.HasKey(pk => pk.Id);
+            });
 
         }
 

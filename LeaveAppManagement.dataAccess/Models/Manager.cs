@@ -2,9 +2,8 @@
 
 namespace LeaveAppManagement.dataAccess.Models
 {
-    public class Manager
+    public class Manager : Users
     {
-        public int Id { get; set; }
-        public ICollection<LeaveRequest>? LeaveRequestPending { get; set; }
+        public ICollection<LeaveRequest>? LeaveRequests { get; set; }
     }
 }
