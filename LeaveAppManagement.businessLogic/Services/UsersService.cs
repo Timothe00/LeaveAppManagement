@@ -3,6 +3,7 @@ using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace LeaveAppManagement.businessLogic.Services
@@ -17,40 +18,137 @@ namespace LeaveAppManagement.businessLogic.Services
         }
 
 
-        //public async Task<Users> AddUsersAsync(UsersDto usersDto)
-        //{
-        //    Users users = new Users();
-        //    Employee employee = new Employee();
-        //    Manager manager = new Manager();
-        //    Admin admin = new Admin();
+        public async Task<Users> AddUsersServiceAsync(UsersDto usersDto)
+        {
+            Users users = new Users();
 
-        //    if (usersDto != null)
-        //    {
-        //        if (usersDto.Role == "Employee")
-        //        {
-        //            employee.FirstName = usersDto.FirstName;
-        //            employee.LastName = usersDto.LastName;
-        //            employee.Email = usersDto.Email;
-        //            employee.Password = usersDto.Password;
-        //            employee.PhoneNumber = usersDto.PhoneNumber;
-        //            employee.Job = usersDto.Job;
-        //            employee.Status = usersDto.Status;
-        //            employee.Roles.Name = usersDto.Role;
+            if (usersDto != null)
+            {
+                if (usersDto.RoleId == 3)
+                {
+                    Employee employee = new Employee()
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+                        
+                    };
 
-        //            return await _usersRepository.AddUserAsync(employee);
-                     
-        //        }
+                 return await _usersRepository.AddUserAsync(employee);
+                }
+                else if(usersDto.RoleId == 2)
+                {
+                    Manager manager = new Manager() 
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+                    };
+                    return await _usersRepository.AddUserAsync(manager);
 
-        //    }
+                }else if(usersDto.RoleId == 1)
+                {
+                    Admin admin = new Admin() 
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+                    };
+                    return await _usersRepository.AddUserAsync(admin);
+                }
+            }
+            return users;
+        }
+
+
+        public async Task<Users> UpdateUserServiceAsync(UsersDto usersDto)
+        {
+            Users users = new Users();
+
+            if (usersDto != null)
+            {
+                if (usersDto.RoleId == 3)
+                {
+                    Employee employee = new Employee()
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+
+                    };
+
+                    return await _usersRepository.UpdateUserAsync(employee);
+                }
+                else if (usersDto.RoleId == 2)
+                {
+                    Manager manager = new Manager()
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+                    };
+                    return await _usersRepository.UpdateUserAsync(manager);
+
+                }
+                else if (usersDto.RoleId == 1)
+                {
+                    Admin admin = new Admin()
+                    {
+                        FirstName = usersDto.FirstName,
+                        LastName = usersDto.LastName,
+                        Email = usersDto.Email,
+                        Password = usersDto.Password,
+                        PhoneNumber = usersDto.PhoneNumber,
+                        Job = usersDto.Job,
+                        Status = usersDto.Status,
+                        RoleId = usersDto.RoleId,
+                    };
+                    return await _usersRepository.UpdateUserAsync(admin);
+                }
+            }
+            return users;
+        }
 
 
 
+        public async Task<bool> DeleteUserServiceAsync(int userId)
+        {
+            if (userId < 0)
+            {
+                return false;
+            }
+            await _usersRepository.DeleteUserAsync(userId);
+            return true;
+        }
 
-        //}
 
 
-
-        public async Task<IEnumerable<UsersDto>> GetUsersAsync(CancellationToken cancellationToken)
+            public async Task<IEnumerable<UsersDto>> GetUserServiceAsync(CancellationToken cancellationToken)
         {
             IEnumerable<Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
 
@@ -70,12 +168,10 @@ namespace LeaveAppManagement.businessLogic.Services
             return usersdto;
         }
 
-        public async Task<UsersDto> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<UsersDto> GetUserServiceByIdAsync(int id, CancellationToken cancellationToken)
         {
             IEnumerable<Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
-
             var user = users.Where(us => us.Id == id).FirstOrDefault();
-
             UsersDto usersDto = new UsersDto
             {
                 Id = user.Id,
@@ -89,10 +185,10 @@ namespace LeaveAppManagement.businessLogic.Services
                 RoleId = user.RoleId,
                 Role = user.Roles.Name
             };
-
             return usersDto;
         }
  
+
 
 
 

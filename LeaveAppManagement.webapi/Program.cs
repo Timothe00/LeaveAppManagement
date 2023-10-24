@@ -37,8 +37,10 @@ builder.Services.AddSwaggerGen(c=>
 });
 
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 // Add services to the container.

@@ -1,4 +1,5 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.dataAccess.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,11 +17,11 @@ namespace LeaveAppManagement.webapi.Controllers
         }
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken)
         {
             try
             {
-                return Ok(await _iusersService.GetUsersAsync(cancellationToken));
+                return Ok(await _iusersService.GetUserServiceAsync(cancellationToken));
             }
             catch (Exception ex)
             {
@@ -30,9 +31,9 @@ namespace LeaveAppManagement.webapi.Controllers
 
         //GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOneUserAsync(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetOneUserInTableAsync(int id, CancellationToken cancellationToken)
         {
-            var user = await _iusersService.GetUserByIdAsync(id, cancellationToken);
+            var user = await _iusersService.GetUserServiceByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 return NotFound();
@@ -40,22 +41,52 @@ namespace LeaveAppManagement.webapi.Controllers
             return Ok(user);
         }
 
-        // POST api/<UsersController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        //POST api/<UsersController>
+        [HttpPost]
+        public async Task<IActionResult> PostUsersInTableAsync([FromBody] UsersDto usersDto)
+        {
+           
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid data.");
+            }
+            else
+            {
+                var user = await _iusersService.AddUsersServiceAsync(usersDto);
+                return Ok(user);
+            }
+
+        }
 
         // PUT api/<UsersController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUserInTable([FromBody] UsersDto usersDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid data.");
+            }
+            else
+            {
+                var user = await _iusersService.UpdateUserServiceAsync(usersDto);
+                return Ok(user);
+            }
+        }
 
-        // DELETE api/<UsersController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        //DELETE api/<UsersController>/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserInTableAsync(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid id.");
+            }
+            else
+            {
+                var del = await _iusersService.DeleteUserServiceAsync(id);
+                return Ok(del);
+
+            }
+        }
     }
 }

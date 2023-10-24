@@ -1,9 +1,5 @@
 ﻿using LeaveAppManagement.dataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LeaveAppManagement.dataAccess.Interfaces
 {
@@ -11,5 +7,7 @@ namespace LeaveAppManagement.dataAccess.Interfaces
     {
         Task<IEnumerable<Users>> GetUsersAsync(CancellationToken cancellationToken);
         Task<Users> AddUserAsync(Users user);
+        Task<Users> UpdateUserAsync(Users user);
+        Task<bool> DeleteUserAsync(int id);
     }
 }
