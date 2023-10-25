@@ -3,9 +3,12 @@ using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +47,18 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 // Add services to the container.
-
+//injection de jwtBearer(Authentication)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        });
 
 var app = builder.Build();
 
@@ -61,6 +75,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//ajouter UseAuthentication() pour dire qu'avant toute authorisation il faut se connecter
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

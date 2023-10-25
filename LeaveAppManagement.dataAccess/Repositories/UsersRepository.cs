@@ -1,6 +1,7 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
+using LeaveAppManagement.dataAccess.Models.Authentification;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -55,6 +56,17 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 return false;
             }
 
+        }
+
+
+        public async Task<Users> AuthUser(Login user, CancellationToken cancellationToken)
+        {
+            var userMail = await _dbContext.Users.FindAsync(user.Email, cancellationToken);
+            if (userMail != null)
+            {
+                return userMail;
+            }
+            return null;
         }
 
 

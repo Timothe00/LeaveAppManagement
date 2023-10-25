@@ -36,7 +36,6 @@ namespace LeaveAppManagement.businessLogic.Services
                         Job = usersDto.Job,
                         Status = usersDto.Status,
                         RoleId = usersDto.RoleId,
-                        
                     };
 
                  return await _usersRepository.AddUserAsync(employee);

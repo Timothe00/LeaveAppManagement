@@ -1,5 +1,6 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Services;
+using LeaveAppManagement.dataAccess.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -48,8 +49,17 @@ namespace LeaveAppManagement.webapi.Controllers
 
         // POST api/<RoleController>
         //[HttpPost]
-        //public void Post([FromBody] string value)
+        //public async Task<IActionResult> PostRoleInTable([FromBody] RoleDto roleDto, CancellationToken cancellationToken)
         //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest("Invalid data.");
+        //    }
+        //    else
+        //    {
+        //        var role = await _roleService.AddRoleServiceAsync(roleDto, cancellationToken);
+        //        return Ok(role);
+        //    }
         //}
 
         // PUT api/<RoleController>/5

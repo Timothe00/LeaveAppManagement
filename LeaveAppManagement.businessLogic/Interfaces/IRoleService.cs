@@ -1,6 +1,7 @@
 ﻿
 
 using LeaveAppManagement.dataAccess.Dto;
+using LeaveAppManagement.dataAccess.Models;
 
 namespace LeaveAppManagement.businessLogic.Interfaces
 {
@@ -8,5 +9,6 @@ namespace LeaveAppManagement.businessLogic.Interfaces
     {
         Task<IEnumerable<RoleDto>> GetRoleService(CancellationToken cancellationToken);
         Task<RoleDto> GetRoleByIdService(int id, CancellationToken cancellationToken);
+        //Task<Role> AddRoleServiceAsync(RoleDto roleDto, CancellationToken cancellationToken);
     }
 }

@@ -2,11 +2,7 @@
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LeaveAppManagement.dataAccess.Repositories
 {
@@ -22,6 +18,13 @@ namespace LeaveAppManagement.dataAccess.Repositories
         public async Task<IEnumerable<Role>> GetRoleAsync(CancellationToken cancellationToken)
         {
             IEnumerable<Role> role = await _dbContext.Roles.ToListAsync();
+            return role;
+        }
+
+        public async Task<Role> AddRoles(Role role, CancellationToken cancellationToken) 
+        {
+            _dbContext.Roles.Add(role);
+            await _dbContext.SaveChangesAsync();
             return role;
         }
 
