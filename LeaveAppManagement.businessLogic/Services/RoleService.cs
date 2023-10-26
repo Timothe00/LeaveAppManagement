@@ -38,20 +38,5 @@ namespace LeaveAppManagement.businessLogic.Services
             return roleDto;
         }
 
-
-        //public async Task<Role> AddRoleServiceAsync(RoleDto roleDto, CancellationToken cancellationToken)
-        //{
-        //    Role role = new Role();
-
-        //    if (roleDto!=null)
-        //    {
-        //        role.Name = roleDto.Name;
-        //        _ = _iroleRepository.AddRoles(role, cancellationToken);
-        //        return role;
-        //    }
-
-        //    return role;
-        //}
-
     }
 }

@@ -7,5 +7,6 @@ namespace LeaveAppManagement.dataAccess.Interfaces
     {
         Task<IEnumerable<Role>> GetRoleAsync(CancellationToken cancellationToken);
         Task<Role> AddRoles(Role role, CancellationToken cancellationToken);
+        //Task<Role> GetRoleByName(Role ro, CancellationToken cancellationToken);
     }
 }

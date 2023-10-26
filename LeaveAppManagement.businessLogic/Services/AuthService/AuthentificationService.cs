@@ -1,14 +1,16 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
+using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using LeaveAppManagement.dataAccess.Models.Authentification;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+
+
 
 namespace LeaveAppManagement.businessLogic.Services.AuthService
 {
@@ -16,52 +18,65 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
     {
         private readonly IConfiguration _configuration;
         private readonly IUsersRepository _usersRepository;
+        public readonly IRoleRepository _roleRepository;
+        private readonly LeaveAppManagementDbContext _DbContext;
 
-        public AuthentificationService(IUsersRepository usersRepository, IConfiguration configuration)
+        public AuthentificationService(
+            IUsersRepository usersRepository,
+            IRoleRepository roleRepository,
+            IConfiguration configuration,
+            LeaveAppManagementDbContext DbContext
+            )
         {
             _usersRepository = usersRepository;
             _configuration = configuration;
+            _roleRepository = roleRepository;
+            _DbContext = DbContext;
         }
 
 
 
-        public async Task<Users> Authenticate(Login userLogin)
+
+        public async Task<string> Authenticate(Login userLogin, CancellationToken cancellationToken)
         {
-            var user = _usersRepository.Users.Where(u => u.Email == userLogin.Email).FirstOrDefault();
+           IEnumerable <Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
+
+            Users user = users.Where(u=> u.Email == userLogin.Email).FirstOrDefault();
             if (user != null)
             {
-                bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userLogin.Password, user.Password);
-                if (isPasswordValid)
+                if (user.Password == EncryptPassword.HashPswd(userLogin.Password))
                 {
-                    return user;
+                    return GenerateToken(user, cancellationToken);
                 }
+                return null;
             }
+            
             return null;
         }
 
 
-        //public string GenerateToken(Users user)
-        //{
-        //    string? role = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.Name).FirstOrDefault();
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new Claim[]
-        //        {
-        //                new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id) ),
-        //                new Claim(ClaimTypes.Name, user.LastName),
-        //                new Claim(ClaimTypes.Surname, user.FirstName),
-        //                new Claim(ClaimTypes.Role ,role)
-        //        }),
-        //        Expires = DateTime.UtcNow.AddHours(1),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        public string GenerateToken(Users user, CancellationToken cancellationToken)
+        {
+            string? role = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.Name).FirstOrDefault();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id) ),
+                new Claim(ClaimTypes.Name, user.LastName),
+                new Claim(ClaimTypes.Surname, user.FirstName),
+                new Claim(ClaimTypes.Role ,role)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 
-        //    };
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
-        //    var tokenString = tokenHandler.WriteToken(token);
-        //    return new JwtSecurityTokenHandler().WriteToken(token);
-        //}
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
 
     }
 }

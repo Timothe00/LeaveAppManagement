@@ -1,5 +1,5 @@
 ﻿using LeaveAppManagement.dataAccess.Models;
-
+using LeaveAppManagement.dataAccess.Models.Authentification;
 
 namespace LeaveAppManagement.dataAccess.Interfaces
 {
@@ -9,6 +9,6 @@ namespace LeaveAppManagement.dataAccess.Interfaces
         Task<Users> AddUserAsync(Users user);
         Task<Users> UpdateUserAsync(Users user);
         Task<bool> DeleteUserAsync(int id);
-        //Task<Users> AuthUser(Users user, CancellationToken cancellationToken);
+        
     }
 }

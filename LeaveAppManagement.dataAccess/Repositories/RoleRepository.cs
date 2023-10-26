@@ -1,4 +1,5 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
+using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,12 @@ namespace LeaveAppManagement.dataAccess.Repositories
             IEnumerable<Role> role = await _dbContext.Roles.ToListAsync();
             return role;
         }
+
+        //public async Task<Role> GetRoleByName(Role ro, CancellationToken cancellationToken)
+        //{
+        //    var role = _dbContext.Roles.Where(r => r.Id == ro.Id).FirstOrDefault();
+        //    return role;
+        //}
 
         public async Task<Role> AddRoles(Role role, CancellationToken cancellationToken) 
         {

@@ -29,12 +29,12 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         public async Task<Users> UpdateUserAsync(Users user)
         {
-            var us = await _dbContext.Users.Select(u=>u.Id).ToListAsync();
-            if (us != null)
+            var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+            if (existingUser != null)
             {
-                _dbContext.Users.Update(user);
+                _dbContext.Users.Update(existingUser);
                 await _dbContext.SaveChangesAsync();
-                return user;
+                return existingUser;
             }
             return null;
         }
@@ -56,17 +56,6 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 return false;
             }
 
-        }
-
-
-        public async Task<Users> AuthUser(Login user, CancellationToken cancellationToken)
-        {
-            var userMail = await _dbContext.Users.FindAsync(user.Email, cancellationToken);
-            if (userMail != null)
-            {
-                return userMail;
-            }
-            return null;
         }
 
 

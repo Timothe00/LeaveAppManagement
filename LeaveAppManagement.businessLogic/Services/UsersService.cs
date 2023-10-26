@@ -1,4 +1,5 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
@@ -20,59 +21,40 @@ namespace LeaveAppManagement.businessLogic.Services
 
         public async Task<Users> AddUsersServiceAsync(UsersDto usersDto)
         {
-            Users users = new Users();
-
-            if (usersDto != null)
+            if (usersDto == null)
             {
-                if (usersDto.RoleId == 3)
-                {
-                    Employee employee = new Employee()
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-                    };
-
-                 return await _usersRepository.AddUserAsync(employee);
-                }
-                else if(usersDto.RoleId == 2)
-                {
-                    Manager manager = new Manager() 
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-                    };
-                    return await _usersRepository.AddUserAsync(manager);
-
-                }else if(usersDto.RoleId == 1)
-                {
-                    Admin admin = new Admin() 
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-                    };
-                    return await _usersRepository.AddUserAsync(admin);
-                }
+                return null;
             }
-            return users;
+
+            Users user = null;
+
+            switch (usersDto.RoleId)
+            {
+                case 3:
+                    user = new Employee();
+                    break;
+                case 2:
+                    user = new Manager();
+                    break;
+                case 1:
+                    user = new Admin();
+                    break;
+                default:
+                    return null;
+            }
+
+            user.FirstName = usersDto.FirstName;
+            user.LastName = usersDto.LastName;
+            user.Email = usersDto.Email;
+            user.Password = EncryptPassword.HashPswd(usersDto.Password);
+            user.PhoneNumber = usersDto.PhoneNumber;
+            user.Job = usersDto.Job;
+            user.Status = usersDto.Status;
+            user.RoleId = usersDto.RoleId;
+
+            return await _usersRepository.AddUserAsync(user);
         }
+
 
 
         public async Task<Users> UpdateUserServiceAsync(UsersDto usersDto)

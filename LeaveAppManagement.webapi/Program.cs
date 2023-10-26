@@ -1,5 +1,7 @@
 using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
 using LeaveAppManagement.businessLogic.Services;
+using LeaveAppManagement.businessLogic.Services.AuthService;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Repositories;
@@ -10,8 +12,9 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
 
+
+var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<LeaveAppManagementDbContext>(Option => {
@@ -41,12 +44,15 @@ builder.Services.AddSwaggerGen(c=>
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 // Add services to the container.
+
+
 //injection de jwtBearer(Authentication)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters

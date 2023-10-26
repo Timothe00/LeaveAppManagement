@@ -1,6 +1,4 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
-using LeaveAppManagement.businessLogic.Services;
-using LeaveAppManagement.dataAccess.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
