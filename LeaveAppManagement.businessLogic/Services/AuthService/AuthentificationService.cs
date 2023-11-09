@@ -7,6 +7,7 @@ using LeaveAppManagement.dataAccess.Models.Authentification;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -39,9 +40,9 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
 
         public async Task<string> Authenticate(Login userLogin, CancellationToken cancellationToken)
         {
-           IEnumerable <Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
+            IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
 
-            Users user = users.Where(u=> u.Email == userLogin.Email).FirstOrDefault();
+            User? user = users.Where(u => u.Email == userLogin.Email).FirstOrDefault();
             if (user != null)
             {
                 if (user.Password == EncryptPassword.HashPswd(userLogin.Password))
@@ -50,14 +51,14 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
                 }
                 return null;
             }
-            
+
             return null;
         }
 
 
-        public string GenerateToken(Users user, CancellationToken cancellationToken)
+        public string GenerateToken(User user, CancellationToken cancellationToken)
         {
-            string? role = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.Name).FirstOrDefault();
+            string? RoleName = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.RoleName).FirstOrDefault();
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -67,7 +68,7 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
                 new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id) ),
                 new Claim(ClaimTypes.Name, user.LastName),
                 new Claim(ClaimTypes.Surname, user.FirstName),
-                new Claim(ClaimTypes.Role ,role)
+                new Claim(ClaimTypes.Role ,RoleName)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

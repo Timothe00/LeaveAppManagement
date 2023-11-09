@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20231023113308_InitialCreate")]
+    [Migration("20231109115645_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -36,10 +36,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LeaveBalanceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LeaveBalancesId")
+                    b.Property<int>("LeaveRequestId")
                         .HasColumnType("int");
 
                     b.Property<int>("TotaLeaveAvailable")
@@ -55,7 +52,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("LeaveBalancesId");
+                    b.HasIndex("LeaveRequestId");
 
                     b.ToTable("LeaveBalances");
                 });
@@ -67,6 +64,10 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Commentary")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime2");
@@ -80,10 +81,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Justification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
@@ -93,8 +90,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("NumberOfDays")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<string>("RequestStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -116,16 +112,10 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("LeaveTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
+                    b.Property<string>("LeaveTypeName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LeaveTypeId");
 
                     b.ToTable("LeaveTypes");
                 });
@@ -138,19 +128,19 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("RoleName")
                         .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
+                        .HasFilter("[RoleName] IS NOT NULL");
 
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Users", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,6 +159,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActiveUser")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Job")
                         .IsRequired()
@@ -189,9 +182,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -204,97 +194,92 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     b.ToTable("Users");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Users");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
                     b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Admin", b =>
                 {
-                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
+                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.User");
 
                     b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
                 {
-                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
+                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.User");
 
                     b.HasDiscriminator().HasValue("Employee");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
                 {
-                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.Users");
+                    b.HasBaseType("LeaveAppManagement.dataAccess.Models.User");
 
                     b.HasDiscriminator().HasValue("Manager");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveBalance", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employees")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employee")
                         .WithMany("LeaveBalances")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveBalance", "LeaveBalances")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveRequest", "LeaveRequest")
                         .WithMany()
-                        .HasForeignKey("LeaveBalancesId");
+                        .HasForeignKey("LeaveRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Employees");
+                    b.Navigation("Employee");
 
-                    b.Navigation("LeaveBalances");
+                    b.Navigation("LeaveRequest");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveRequest", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employees")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employee")
                         .WithMany("LeaveRequests")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveType", "LeaveTypes")
-                        .WithMany()
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveType", "LeaveType")
+                        .WithMany("LeaveRequests")
                         .HasForeignKey("LeaveTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", "Managers")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", "Manager")
                         .WithMany("LeaveRequests")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employees");
+                    b.Navigation("Employee");
 
-                    b.Navigation("LeaveTypes");
+                    b.Navigation("LeaveType");
 
-                    b.Navigation("Managers");
+                    b.Navigation("Manager");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveType", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.User", b =>
                 {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveType", null)
-                        .WithMany("LeaveTypes")
-                        .HasForeignKey("LeaveTypeId");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Users", b =>
-                {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Role", "Roles")
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Roles");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveType", b =>
                 {
-                    b.Navigation("LeaveTypes");
+                    b.Navigation("LeaveRequests");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Role", b =>

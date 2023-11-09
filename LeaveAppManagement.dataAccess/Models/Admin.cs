@@ -2,7 +2,7 @@
 
 namespace LeaveAppManagement.dataAccess.Models
 {
-    public class Admin : Users
+    public class Admin : User
     {
 
     }

@@ -2,7 +2,6 @@
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
-using LeaveAppManagement.dataAccess.Repositories;
 
 namespace LeaveAppManagement.businessLogic.Services
 {
@@ -21,7 +20,7 @@ namespace LeaveAppManagement.businessLogic.Services
             IEnumerable<RoleDto> roledto = role.Select(r => new RoleDto
             {
                 Id = r.Id,
-                Name = r.Name,
+                RoleName = r.RoleName,
             });
             return roledto;
         }
@@ -32,8 +31,8 @@ namespace LeaveAppManagement.businessLogic.Services
             var oneRole = role.Where(us => us.Id == id).FirstOrDefault();
             RoleDto roleDto = new RoleDto
             {
-                Id= oneRole.Id,
-                Name = oneRole.Name,
+                Id = oneRole.Id,
+                RoleName = oneRole.RoleName,
             };
             return roleDto;
         }

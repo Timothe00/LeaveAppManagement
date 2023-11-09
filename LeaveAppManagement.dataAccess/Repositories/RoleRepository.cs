@@ -22,11 +22,6 @@ namespace LeaveAppManagement.dataAccess.Repositories
             return role;
         }
 
-        //public async Task<Role> GetRoleByName(Role ro, CancellationToken cancellationToken)
-        //{
-        //    var role = _dbContext.Roles.Where(r => r.Id == ro.Id).FirstOrDefault();
-        //    return role;
-        //}
 
         public async Task<Role> AddRoles(Role role, CancellationToken cancellationToken) 
         {
@@ -34,6 +29,8 @@ namespace LeaveAppManagement.dataAccess.Repositories
             await _dbContext.SaveChangesAsync();
             return role;
         }
+
+
 
 
 

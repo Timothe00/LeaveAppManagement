@@ -2,7 +2,7 @@
 
 namespace LeaveAppManagement.dataAccess.Models
 {
-    public class Users
+    public class User
     {
         // Classe de base pour les utilisateurs
         public int Id { get; set; }
@@ -12,10 +12,10 @@ namespace LeaveAppManagement.dataAccess.Models
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Job { get; set; } = string.Empty;
-        public bool Status { get; set; }
+        public bool IsActiveUser { get; set; }
 
         public int RoleId { get; set; }
-        public virtual Role? Roles { get; set; }
+        public virtual Role? Role { get; set; }
 
     }
 }

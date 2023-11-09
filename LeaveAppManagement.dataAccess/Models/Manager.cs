@@ -2,7 +2,7 @@
 
 namespace LeaveAppManagement.dataAccess.Models
 {
-    public class Manager : Users
+    public class Manager : User
     {
         public ICollection<LeaveRequest>? LeaveRequests { get; set; }
     }

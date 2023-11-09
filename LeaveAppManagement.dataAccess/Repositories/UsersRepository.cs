@@ -1,7 +1,6 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
-using LeaveAppManagement.dataAccess.Models.Authentification;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -14,29 +13,57 @@ namespace LeaveAppManagement.dataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Users>> GetUsersAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken)
         {
-            IEnumerable<Users> users = await _dbContext.Users.Include(u => u.Roles).ToListAsync();
-            return users;
+            IEnumerable<User> users = await _dbContext.Users.Include(u => u.Role).ToListAsync(cancellationToken);
+            var usersWithRoleNames = users.Select(u => new User
+            {
+                Id = u.Id,
+                LastName = u.LastName,
+                FirstName = u.FirstName,
+                Email = u.Email,
+                Password = u.Password,
+                Job = u.Job,
+                RoleId = u.RoleId,
+                Role = new Role
+                {
+                    RoleName = u.Role.RoleName
+                },
+
+                PhoneNumber = u.PhoneNumber,
+                IsActiveUser = u.IsActiveUser,
+
+            }).ToList();
+
+            return usersWithRoleNames;
         }
 
-        public async Task<Users> AddUserAsync(Users user)
+        public async Task<User> AddUserAsync(User user)
         {
             _ = _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
             return user;
         }
 
-        public async Task<Users> UpdateUserAsync(Users user)
+        public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
-            var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
-            if (existingUser != null)
+            var users = await _dbContext.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync(cancellationToken);
+            if (users != null)
             {
-                _dbContext.Users.Update(existingUser);
+                users.Id = user.Id;
+                users.LastName = user.LastName;
+                users.FirstName = user.FirstName;
+                users.Email = user.Email;
+                users.Password = user.Password;
+                users.Job = user.Job;
+                users.PhoneNumber = user.PhoneNumber;
+                users.RoleId = user.RoleId;
+                users.IsActiveUser = user.IsActiveUser;
+                _dbContext.Users.Update(users);
                 await _dbContext.SaveChangesAsync();
-                return existingUser;
             }
             return null;
+
         }
 
 

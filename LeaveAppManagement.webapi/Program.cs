@@ -17,7 +17,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<LeaveAppManagementDbContext>(Option => {
+builder.Services.AddDbContext<LeaveAppManagementDbContext>(Option =>
+{
     Option.UseSqlServer(builder.Configuration.GetConnectionString("LinkCs"));
 });
 
@@ -28,7 +29,7 @@ builder.Services.AddDbContext<LeaveAppManagementDbContext>(Option => {
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c=>
+builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo()
     {
@@ -44,11 +45,14 @@ builder.Services.AddSwaggerGen(c=>
 
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
+builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
 builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-
+builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+builder.Services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
 
 // Add services to the container.
 

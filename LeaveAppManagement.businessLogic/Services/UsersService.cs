@@ -1,11 +1,9 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Utility;
-using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
+
 
 namespace LeaveAppManagement.businessLogic.Services
 {
@@ -19,14 +17,14 @@ namespace LeaveAppManagement.businessLogic.Services
         }
 
 
-        public async Task<Users> AddUsersServiceAsync(UsersDto usersDto)
+        public async Task<User> AddUsersServiceAsync(UsersDto usersDto)
         {
             if (usersDto == null)
             {
                 return null;
             }
 
-            Users user = null;
+            User? user = null;
 
             switch (usersDto.RoleId)
             {
@@ -49,73 +47,50 @@ namespace LeaveAppManagement.businessLogic.Services
             user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
-            user.Status = usersDto.Status;
+            user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
 
             return await _usersRepository.AddUserAsync(user);
         }
 
 
-
-        public async Task<Users> UpdateUserServiceAsync(UsersDto usersDto)
+        public async Task<User> UpdateUserServiceAsync(UsersDto usersDto, CancellationToken cancellationToken)
         {
-            Users users = new Users();
-
-            if (usersDto != null)
+            if (usersDto == null)
             {
-                if (usersDto.RoleId == 3)
-                {
-                    Employee employee = new Employee()
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-
-                    };
-
-                    return await _usersRepository.UpdateUserAsync(employee);
-                }
-                else if (usersDto.RoleId == 2)
-                {
-                    Manager manager = new Manager()
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-                    };
-                    return await _usersRepository.UpdateUserAsync(manager);
-
-                }
-                else if (usersDto.RoleId == 1)
-                {
-                    Admin admin = new Admin()
-                    {
-                        FirstName = usersDto.FirstName,
-                        LastName = usersDto.LastName,
-                        Email = usersDto.Email,
-                        Password = usersDto.Password,
-                        PhoneNumber = usersDto.PhoneNumber,
-                        Job = usersDto.Job,
-                        Status = usersDto.Status,
-                        RoleId = usersDto.RoleId,
-                    };
-                    return await _usersRepository.UpdateUserAsync(admin);
-                }
+                return null;
             }
-            return users;
+
+            User? user = null;
+
+            switch (usersDto.RoleId)
+            {
+                case 3:
+                    user = new Employee();
+                    break;
+                case 2:
+                    user = new Manager();
+                    break;
+                case 1:
+                    user = new Admin();
+                    break;
+                default:
+                    return null; // Gérer le cas où RoleId n'est pas valide.
+            }
+
+            // Initialisation des propriétés communes à tous les types d'utilisateurs.
+            user.Id = usersDto.Id;
+            user.FirstName = usersDto.FirstName;
+            user.LastName = usersDto.LastName;
+            user.Email = usersDto.Email;
+            user.Password = usersDto.Password;
+            user.PhoneNumber = usersDto.PhoneNumber;
+            user.Job = usersDto.Job;
+            user.IsActiveUser = usersDto.IsActiveUser;
+            user.RoleId = usersDto.RoleId;
+            await _usersRepository.UpdateUserAsync(user, cancellationToken);
+            return user;
         }
-
-
 
         public async Task<bool> DeleteUserServiceAsync(int userId)
         {
@@ -127,11 +102,9 @@ namespace LeaveAppManagement.businessLogic.Services
             return true;
         }
 
-
-
-            public async Task<IEnumerable<UsersDto>> GetUserServiceAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<UsersDto>> GetUserServiceAsync(CancellationToken cancellationToken)
         {
-            IEnumerable<Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
+            IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
 
             IEnumerable<UsersDto> usersdto = users.Select(u => new UsersDto
             {
@@ -142,16 +115,16 @@ namespace LeaveAppManagement.businessLogic.Services
                 Password = u.Password,
                 PhoneNumber = u.PhoneNumber,
                 Job = u.Job,
-                Status = u.Status,
+                IsActiveUser = u.IsActiveUser,
                 RoleId = u.RoleId,
-                Role = u.Roles.Name
+                RoleName = u.Role.RoleName
             });
             return usersdto;
         }
 
         public async Task<UsersDto> GetUserServiceByIdAsync(int id, CancellationToken cancellationToken)
         {
-            IEnumerable<Users> users = await _usersRepository.GetUsersAsync(cancellationToken);
+            IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
             var user = users.Where(us => us.Id == id).FirstOrDefault();
             UsersDto usersDto = new UsersDto
             {
@@ -162,13 +135,13 @@ namespace LeaveAppManagement.businessLogic.Services
                 Password = user.Password,
                 PhoneNumber = user.PhoneNumber,
                 Job = user.Job,
-                Status = user.Status,
+                IsActiveUser = user.IsActiveUser,
                 RoleId = user.RoleId,
-                Role = user.Roles.Name
+                RoleName = user.Role.RoleName
             };
             return usersDto;
         }
- 
+
 
 
 

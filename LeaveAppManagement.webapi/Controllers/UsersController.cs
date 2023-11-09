@@ -62,7 +62,7 @@ namespace LeaveAppManagement.webapi.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserInTable([FromBody] UsersDto usersDto)
+        public async Task<IActionResult> PutUserInTableAsync([FromBody] UsersDto usersDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace LeaveAppManagement.webapi.Controllers
             }
             else
             {
-                var user = await _iusersService.UpdateUserServiceAsync(usersDto);
+                var user = await _iusersService.UpdateUserServiceAsync(usersDto, cancellationToken);
                 return Ok(user);
             }
         }
@@ -79,15 +79,19 @@ namespace LeaveAppManagement.webapi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserInTableAsync(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid id.");
-            }
-            else
+
+            try
             {
                 var del = await _iusersService.DeleteUserServiceAsync(id);
+                if (del==null)
+                {
+                    return BadRequest("Cette donnnée n'existe pas !");    
+                }
                 return Ok(del);
-
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

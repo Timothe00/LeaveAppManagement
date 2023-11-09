@@ -17,17 +17,11 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LeaveTypeId = table.Column<int>(type: "int", nullable: true)
+                    LeaveTypeName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LeaveTypes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LeaveTypes_LeaveTypes_LeaveTypeId",
-                        column: x => x.LeaveTypeId,
-                        principalTable: "LeaveTypes",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +30,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RoleName = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,7 +49,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Job = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    IsActiveUser = table.Column<bool>(type: "bit", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -71,35 +65,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LeaveBalances",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TotaLeaveAvailable = table.Column<int>(type: "int", nullable: false),
-                    TotalCurrentLeave = table.Column<int>(type: "int", nullable: false),
-                    Years = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    LeaveBalanceId = table.Column<int>(type: "int", nullable: false),
-                    LeaveBalancesId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LeaveBalances", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_LeaveBalances_LeaveBalancesId",
-                        column: x => x.LeaveBalancesId,
-                        principalTable: "LeaveBalances",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_Users_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LeaveRequests",
                 columns: table => new
                 {
@@ -109,11 +74,11 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     NumberOfDays = table.Column<int>(type: "int", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Justification = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ManagerId = table.Column<int>(type: "int", nullable: true),
+                    Commentary = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    LeaveTypeId = table.Column<int>(type: "int", nullable: false)
+                    LeaveTypeId = table.Column<int>(type: "int", nullable: false),
+                    ManagerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,15 +103,44 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         onDelete: ReferentialAction.NoAction);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "LeaveBalances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TotaLeaveAvailable = table.Column<int>(type: "int", nullable: false),
+                    TotalCurrentLeave = table.Column<int>(type: "int", nullable: false),
+                    Years = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    LeaveRequestId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaveBalances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LeaveBalances_LeaveRequests_LeaveRequestId",
+                        column: x => x.LeaveRequestId,
+                        principalTable: "LeaveRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeaveBalances_Users_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_LeaveBalances_EmployeeId",
                 table: "LeaveBalances",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LeaveBalances_LeaveBalancesId",
+                name: "IX_LeaveBalances_LeaveRequestId",
                 table: "LeaveBalances",
-                column: "LeaveBalancesId");
+                column: "LeaveRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LeaveRequests_EmployeeId",
@@ -164,16 +158,11 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 column: "ManagerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LeaveTypes_LeaveTypeId",
-                table: "LeaveTypes",
-                column: "LeaveTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Roles_Name",
+                name: "IX_Roles_RoleName",
                 table: "Roles",
-                column: "Name",
+                column: "RoleName",
                 unique: true,
-                filter: "[Name] IS NOT NULL");
+                filter: "[RoleName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
