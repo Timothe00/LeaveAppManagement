@@ -66,11 +66,10 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                 new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id) ),
-                new Claim(ClaimTypes.Name, user.LastName),
-                new Claim(ClaimTypes.Surname, user.FirstName),
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                 new Claim(ClaimTypes.Role ,RoleName)
                 }),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 
             };

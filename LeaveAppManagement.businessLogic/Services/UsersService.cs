@@ -19,10 +19,14 @@ namespace LeaveAppManagement.businessLogic.Services
 
         public async Task<User> AddUsersServiceAsync(UsersDto usersDto)
         {
-            if (usersDto == null)
+
+            // Check if the email exists in the database
+            var emailExists = await _usersRepository.CheckEmailExistsAsync(usersDto.Email);
+            if (emailExists)
             {
-                return null;
+                return null; // Email already exists
             }
+
 
             User? user = null;
 

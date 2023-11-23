@@ -1,5 +1,6 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.dataAccess.Dto;
+using LeaveAppManagement.dataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace LeaveAppManagement.webapi.Controllers
             _iusersService = iusersService;
         }
         // GET: api/<UsersController>
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken)
         {
@@ -55,7 +57,11 @@ namespace LeaveAppManagement.webapi.Controllers
             else
             {
                 var user = await _iusersService.AddUsersServiceAsync(usersDto);
-                return Ok(user);
+                return Ok(new
+                {
+                    userCreate = user,
+                    Message = "Utilisateur crée avec succès"
+                });
             }
 
         }
@@ -71,7 +77,11 @@ namespace LeaveAppManagement.webapi.Controllers
             else
             {
                 var user = await _iusersService.UpdateUserServiceAsync(usersDto, cancellationToken);
-                return Ok(user);
+                return Ok(new
+                {
+                    userUpdate = user,
+                    Message = "Utilisateur modifié avec succès"
+                });
             }
         }
 
@@ -85,9 +95,13 @@ namespace LeaveAppManagement.webapi.Controllers
                 var del = await _iusersService.DeleteUserServiceAsync(id);
                 if (del==null)
                 {
-                    return BadRequest("Cette donnnée n'existe pas !");    
+                    return BadRequest("Cette donnée n'existe pas !");    
                 }
-                return Ok(del);
+                return Ok(new
+                {
+                    userDelete = del,
+                    Message = "Utilisateur supprimé avec succès"
+                });
             }
             catch(Exception ex)
             {

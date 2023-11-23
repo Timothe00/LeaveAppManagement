@@ -10,6 +10,8 @@ namespace LeaveAppManagement.dataAccess.Interfaces
         Task<User> AddUserAsync(User user);
         Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken);
         Task<bool> DeleteUserAsync(int id);
-        
+        Task<bool> CheckEmailExistsAsync(string email);
+
+
     }
 }

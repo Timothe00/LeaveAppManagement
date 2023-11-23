@@ -1,4 +1,4 @@
-using LeaveAppManagement.businessLogic.Interfaces;
+ï»¿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
 using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.businessLogic.Services.AuthService;
@@ -35,12 +35,26 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "LeaveAppManagement",
         Version = "1.0.0",
-        Description = "Documentation d'une plateforme de gestion de congé"
+        Description = "Documentation d'une plateformeÂ deÂ gestion de congÃ©"
     });
 
     string fichier = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     string fichierXml = Path.Combine(AppContext.BaseDirectory, fichier);
     c.IncludeXmlComments(fichierXml);
+});
+
+
+//Gesttion des erreurs d'entï¿½te CORS
+string? corsOrigin = builder.Configuration.GetSection("CorsOrigin").Get<string>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
 builder.Services.AddScoped<IUsersService, UsersService>();
@@ -64,6 +78,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
+            SaveSigninToken = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
@@ -84,7 +99,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 //ajouter UseAuthentication() pour dire qu'avant toute authorisation il faut se connecter
 app.UseAuthentication();
 app.UseAuthorization();

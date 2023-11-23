@@ -25,7 +25,11 @@ namespace LeaveAppManagement.webapi.Controllers
             string token = await _iAuthentificationService.Authenticate(userLogin, cancellationToken);
             if (token != null)
             {
-                return Ok(token);
+                return Ok(new
+                {
+                    Token = token,
+                    Message = "Login Success"
+                });
             }
             return NotFound("user not found");
         }

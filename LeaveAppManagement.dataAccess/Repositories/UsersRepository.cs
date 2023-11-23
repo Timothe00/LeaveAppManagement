@@ -2,6 +2,7 @@
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace LeaveAppManagement.dataAccess.Repositories
 {
@@ -15,28 +16,38 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken)
         {
-            IEnumerable<User> users = await _dbContext.Users.Include(u => u.Role).ToListAsync(cancellationToken);
-            var usersWithRoleNames = users.Select(u => new User
-            {
-                Id = u.Id,
-                LastName = u.LastName,
-                FirstName = u.FirstName,
-                Email = u.Email,
-                Password = u.Password,
-                Job = u.Job,
-                RoleId = u.RoleId,
-                Role = new Role
+            var usersWithRoleNames = await (
+                from u in _dbContext.Users
+                join r in _dbContext.Roles on u.RoleId equals r.Id
+                select new User
                 {
-                    RoleName = u.Role.RoleName
-                },
-
-                PhoneNumber = u.PhoneNumber,
-                IsActiveUser = u.IsActiveUser,
-
-            }).ToList();
+                    Id = u.Id,
+                    LastName = u.LastName,
+                    FirstName = u.FirstName,
+                    Email = u.Email,
+                    Password = u.Password,
+                    Job = u.Job,
+                    RoleId = u.RoleId,
+                    Role = new Role
+                    {
+                        RoleName = r.RoleName
+                    },
+                    PhoneNumber = u.PhoneNumber,
+                    IsActiveUser = u.IsActiveUser,
+                }
+            ).ToListAsync(cancellationToken);
 
             return usersWithRoleNames;
         }
+
+
+
+        public async Task<bool> CheckEmailExistsAsync(string email)
+        {
+            var userMail = await _dbContext.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+            return userMail != null;
+        }
+
 
         public async Task<User> AddUserAsync(User user)
         {
