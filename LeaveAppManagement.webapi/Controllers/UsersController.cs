@@ -1,7 +1,6 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.dataAccess.Dto;
-using LeaveAppManagement.dataAccess.Models;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -47,7 +46,7 @@ namespace LeaveAppManagement.webapi.Controllers
 
         //POST api/<UsersController>
         [HttpPost]
-        public async Task<IActionResult> PostUsersInTableAsync([FromBody] UsersDto usersDto)
+        public async Task<IActionResult> PostUsersInTableAsync([FromBody] CreateUserDto usersDto)
         {
            
             if (!ModelState.IsValid)

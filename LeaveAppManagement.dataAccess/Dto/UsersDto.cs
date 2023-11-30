@@ -13,6 +13,6 @@ namespace LeaveAppManagement.dataAccess.Dto
         public string Job { get; set; } = string.Empty;
         public bool IsActiveUser { get; set; }
         public int RoleId { get; set; }
-        public string? RoleName { get; set; }
+        public string? RoleName { get; set; } = null;
     }
 }
