@@ -64,9 +64,6 @@ namespace LeaveAppManagement.businessLogic.Services
             {
                 throw new ArgumentException("LeaveTypeId and EmployeeId cannot be null.");
 
-            }else if(leaveRequest.EmployeeId == leaveRequest.ManagerId)
-            {
-                throw new ArgumentException("Le Manager ne peut effectuer de demande");
             }
 
             var newRequest = new LeaveRequest
@@ -80,7 +77,6 @@ namespace LeaveAppManagement.businessLogic.Services
                 RequestStatus = leaveRequest.RequestStatus,
                 EmployeeId = leaveRequest.EmployeeId,
                 LeaveTypeId = leaveRequest.LeaveTypeId,
-                ManagerId = leaveRequest.ManagerId,
             };
 
 
@@ -99,6 +95,7 @@ namespace LeaveAppManagement.businessLogic.Services
                 DateStart = updateLeaveRequestDto.DateStart,
                 DateEnd = updateLeaveRequestDto.DateEnd,
                 Commentary = updateLeaveRequestDto.Commentary,
+                RequestStatus = updateLeaveRequestDto.RequestStatus,
                 LeaveTypeId = updateLeaveRequestDto.LeaveTypeId
             };
             await _iLeaveRequestRepository.UpdateLeaveRequestAsync(updateLeaveRequestDto, cancellationToken);

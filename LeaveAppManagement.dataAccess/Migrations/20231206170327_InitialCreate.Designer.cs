@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20231109115645_InitialCreate")]
+    [Migration("20231206170327_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,17 +33,20 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<long>("DefaultTotaLeaveAvailable")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int>("LeaveRequestId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotaLeaveAvailable")
-                        .HasColumnType("int");
+                    b.Property<long>("TotaLeaveAvailable")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("TotalCurrentLeave")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalCurrentLeave")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("Years")
                         .HasColumnType("datetime2");
@@ -84,9 +87,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberOfDays")
                         .HasColumnType("int");
 
@@ -98,8 +98,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("LeaveTypeId");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("LeaveRequests");
                 });
@@ -253,17 +251,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", "Manager")
-                        .WithMany("LeaveRequests")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Employee");
 
                     b.Navigation("LeaveType");
-
-                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.User", b =>
@@ -291,11 +281,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 {
                     b.Navigation("LeaveBalances");
 
-                    b.Navigation("LeaveRequests");
-                });
-
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
-                {
                     b.Navigation("LeaveRequests");
                 });
 #pragma warning restore 612, 618

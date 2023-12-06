@@ -17,8 +17,5 @@ namespace LeaveAppManagement.dataAccess.Models
 
         public int LeaveTypeId { get; set; }
         public virtual LeaveType? LeaveType { get; set; }
-
-        public int ManagerId { get; set; }
-        public virtual Manager? Manager { get; set; }
     }
 }

@@ -88,7 +88,7 @@ namespace LeaveAppManagement.webapi.Controllers
             try
             {
                 var del = await _iLeaveRequestService.DeleteLeaveRequestAsyncServiceAsync(id);
-                if (del == null)
+                if (del == false)
                 {
                     return BadRequest("Cette donnnée n'existe pas !");
                 }

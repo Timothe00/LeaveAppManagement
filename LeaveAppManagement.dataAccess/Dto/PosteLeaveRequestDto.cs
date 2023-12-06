@@ -11,6 +11,5 @@
         public string? RequestStatus { get; set; }
         public int EmployeeId { get; set; }
         public int LeaveTypeId { get; set; }
-        public int ManagerId { get; set; }
     }
 }
