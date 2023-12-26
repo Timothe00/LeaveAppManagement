@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20231206170327_InitialCreate")]
+    [Migration("20231218105123_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -85,9 +85,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("LeaveTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfDays")
                         .HasColumnType("int");
 
                     b.Property<string>("RequestStatus")

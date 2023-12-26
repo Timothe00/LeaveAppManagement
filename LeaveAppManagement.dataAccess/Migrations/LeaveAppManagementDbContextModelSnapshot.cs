@@ -84,9 +84,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberOfDays")
-                        .HasColumnType("int");
-
                     b.Property<string>("RequestStatus")
                         .HasColumnType("nvarchar(max)");
 

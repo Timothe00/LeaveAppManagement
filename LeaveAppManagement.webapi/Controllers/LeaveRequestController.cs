@@ -34,9 +34,9 @@ namespace LeaveAppManagement.webapi.Controllers
 
         //GET api/<LeaveRequestController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOneLeaveRequestInTableAsync(int id, int leaveTypeId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetOneLeaveRequestInTableAsync(int id, CancellationToken cancellationToken)
         {
-            var leave = await _iLeaveRequestService.GetLeaveRequestByIdServicAsync(id, leaveTypeId, cancellationToken);
+            var leave = await _iLeaveRequestService.GetLeaveRequestByIdServicAsync(id, cancellationToken);
             try
             {
                 if (leave == null)
@@ -77,6 +77,21 @@ namespace LeaveAppManagement.webapi.Controllers
             else
             {
                 var UpdateRequest = await _iLeaveRequestService.UpdateLeaveRequestServiceAsync(updateLeaveRequestDto, cancellationToken);
+                return Ok(UpdateRequest);
+            }
+        }
+
+        // PUT api/<LeaveRequestController>/5
+        [HttpPut("status")]
+        public async Task<IActionResult> PutLeaveRequestSatusInTableAsync([FromBody] RequestStatusDto requestStatutDto, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid data.");
+            }
+            else
+            {
+                var UpdateRequest = await _iLeaveRequestService.UpdateLeaveRequestStatusServiceAsync(requestStatutDto, cancellationToken);
                 return Ok(UpdateRequest);
             }
         }

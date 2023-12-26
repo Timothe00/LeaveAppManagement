@@ -10,6 +10,7 @@
         public string Commentary { get; set; } = string.Empty;
         public string? RequestStatus { get; set; }
         public string? LeaveTypeName { get; set; }
+        public int EmployeeId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
     }

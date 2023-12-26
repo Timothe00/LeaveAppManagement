@@ -3,6 +3,7 @@ using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LeaveAppManagement.dataAccess.Repositories
 {
@@ -30,11 +31,15 @@ namespace LeaveAppManagement.dataAccess.Repositories
                               {
                                   Id = leave.Id,
                                   DateRequest = leave.DateRequest,
-                                  NumberOfDays = leave.NumberOfDays,
+                                  
                                   DateStart = leave.DateStart,
                                   DateEnd = leave.DateEnd,
+
+                                  NumberOfDays = (leave.DateEnd - leave.DateStart).Days,
+
                                   Commentary = leave.Commentary,
                                   RequestStatus = leave.RequestStatus,
+                                  EmployeeId = leave.EmployeeId,
                                   FirstName = user.FirstName,
                                   LastName = user.LastName,
                                   LeaveTypeName = leaveType.LeaveTypeName,
@@ -46,47 +51,34 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
 
 
-        public async Task<LeaveRequestDto> GetSingleLeaveRequestAsync(int userId, int leaveTypeId, CancellationToken cancellationToken)
+        public async Task<LeaveRequestDto> GetSingleLeaveRequestAsync(int Id, CancellationToken cancellationToken)
         {
             var leaveRequest = await _dbContext.LeaveRequests
-                .Where(request => request.EmployeeId == userId && request.LeaveTypeId == leaveTypeId)
-                .FirstOrDefaultAsync(cancellationToken);
+                .Where(lr => lr.Id == Id)
+                .Join(_dbContext.Users,
+                    leave => leave.EmployeeId,
+                    user => user.Id,
+                    (leave, user) => new { Leave = leave, User = user })
+                .Join(_dbContext.LeaveTypes,
+                    temp0 => temp0.Leave.LeaveTypeId,
+                    leaveType => leaveType.Id,
+                    (temp0, leaveType) => new LeaveRequestDto
+                    {
+                        Id = temp0.Leave.Id,
+                        DateRequest = temp0.Leave.DateRequest.Date,
+                        DateStart = temp0.Leave.DateStart.Date,
+                        DateEnd = temp0.Leave.DateEnd.Date,
+                        NumberOfDays = (temp0.Leave.DateEnd - temp0.Leave.DateStart).Days,
+                        Commentary = temp0.Leave.Commentary,
+                        RequestStatus = temp0.Leave.RequestStatus,
+                        EmployeeId = temp0.Leave.EmployeeId,
+                        FirstName = temp0.User.FirstName,
+                        LastName = temp0.User.LastName,
+                        LeaveTypeName = leaveType.LeaveTypeName
+                    })
+                .SingleOrDefaultAsync(cancellationToken);
 
-            if (leaveRequest == null)
-            {
-                // La demande de congé n'a pas été trouvée.
-                return null;
-            }
-
-            var user = await _dbContext.Users
-                .Where(user => user.Id == userId && user.RoleId == 3)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            var leaveType = await _dbContext.LeaveTypes
-                .Where(type => type.Id == leaveTypeId)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (user == null || leaveType == null)
-            {
-                // L'utilisateur ou le type de congé n'a pas été trouvé.
-                return null;
-            }
-
-            var leaveRequestDto = new LeaveRequestDto
-            {
-                Id = leaveRequest.Id,
-                DateRequest = leaveRequest.DateRequest,
-                NumberOfDays = leaveRequest.NumberOfDays,
-                DateStart = leaveRequest.DateStart,
-                DateEnd = leaveRequest.DateEnd,
-                Commentary = leaveRequest.Commentary,
-                RequestStatus = leaveRequest.RequestStatus,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                LeaveTypeName = leaveType.LeaveTypeName,
-            };
-
-            return leaveRequestDto;
+            return leaveRequest;
         }
 
 
@@ -105,10 +97,9 @@ namespace LeaveAppManagement.dataAccess.Repositories
             if (leaveRequest!=null)
             {
                 leaveRequest.Id = updatReq.Id;
-                leaveRequest.DateRequest = updatReq.DateRequest;
-                leaveRequest.NumberOfDays = updatReq.NumberOfDays;
-                leaveRequest.DateStart = updatReq.DateStart;
-                leaveRequest.DateEnd = updatReq.DateEnd;
+                leaveRequest.DateRequest = updatReq.DateRequest.Date;
+                leaveRequest.DateStart = updatReq.DateStart.Date;
+                leaveRequest.DateEnd = updatReq.DateEnd.Date;
                 leaveRequest.Commentary = updatReq.Commentary;
                 leaveRequest.LeaveTypeId = updatReq.LeaveTypeId;
 
@@ -119,6 +110,21 @@ namespace LeaveAppManagement.dataAccess.Repositories
             return null;
         }
 
+
+        public async Task<LeaveRequest> UpdateRequestStatus(RequestStatusDto requestStatusDto, CancellationToken cancellationToken)
+        {
+            var leaveRequest = await _dbContext.LeaveRequests.Where(lr => lr.Id == requestStatusDto.Id).FirstOrDefaultAsync(cancellationToken);
+
+            if (leaveRequest != null)
+            {
+                leaveRequest.Id = requestStatusDto.Id;
+                leaveRequest.RequestStatus = requestStatusDto.RequestStatus;
+                _dbContext.LeaveRequests.Update(leaveRequest);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return null;
+        }
 
         public async Task<bool> DeleteLeaveRequestAsync(int id)
         {

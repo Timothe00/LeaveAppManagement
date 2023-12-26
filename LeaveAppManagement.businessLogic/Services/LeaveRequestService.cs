@@ -19,16 +19,21 @@ namespace LeaveAppManagement.businessLogic.Services
         {
             IEnumerable<LeaveRequestDto> leaves = await _iLeaveRequestRepository.GetLeaveRequestAsync(cancellationToken);
 
+
             IEnumerable<LeaveRequestDto> leaveRequestDtos = leaves.Select(x => new LeaveRequestDto
             {
                 Id = x.Id,
                 DateRequest = x.DateRequest,
-                NumberOfDays = x.NumberOfDays,
+                
                 DateStart = x.DateStart,
                 DateEnd = x.DateEnd,
+
+                NumberOfDays = (x.DateEnd - x.DateStart).Days,
+
                 Commentary = x.Commentary,
                 RequestStatus = x.RequestStatus,
                 LeaveTypeName = x.LeaveTypeName,
+                EmployeeId = x.EmployeeId,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
 
@@ -36,23 +41,28 @@ namespace LeaveAppManagement.businessLogic.Services
             return leaveRequestDtos;
         }
 
-        public async Task<LeaveRequestDto> GetLeaveRequestByIdServicAsync(int Id, int leaveTypeId, CancellationToken cancellationToken)
+        public async Task<LeaveRequestDto> GetLeaveRequestByIdServicAsync(int Id, CancellationToken cancellationToken)
         {
-            var leave = await _iLeaveRequestRepository.GetSingleLeaveRequestAsync(Id, leaveTypeId, cancellationToken);
+            var leave = await _iLeaveRequestRepository.GetSingleLeaveRequestAsync(Id, cancellationToken);
 
             LeaveRequestDto LeaveRequest = new()
             {
                 Id = leave.Id,
-                DateRequest = leave.DateRequest,
-                NumberOfDays = leave.NumberOfDays,
-                DateStart = leave.DateStart,
-                DateEnd = leave.DateEnd,
+                DateRequest = leave.DateRequest.Date,
+                
+                DateStart = leave.DateStart.Date,
+                DateEnd = leave.DateEnd.Date,
+
+                NumberOfDays = (leave.DateEnd - leave.DateStart).Days,
+
                 Commentary = leave.Commentary,
                 RequestStatus = leave.RequestStatus,
                 LeaveTypeName = leave.LeaveTypeName,
+
+                EmployeeId = leave.EmployeeId,
+
                 FirstName = leave.FirstName,
                 LastName = leave.LastName,
-
             };
             return LeaveRequest;
         }
@@ -68,9 +78,7 @@ namespace LeaveAppManagement.businessLogic.Services
 
             var newRequest = new LeaveRequest
             {
-                Id = leaveRequest.Id,
                 DateRequest = leaveRequest.DateRequest,
-                NumberOfDays = leaveRequest.NumberOfDays,
                 DateStart = leaveRequest.DateStart,
                 DateEnd = leaveRequest.DateEnd,
                 Commentary = leaveRequest.Commentary,
@@ -91,16 +99,28 @@ namespace LeaveAppManagement.businessLogic.Services
             {
                 Id = updateLeaveRequestDto.Id,
                 DateRequest = updateLeaveRequestDto.DateRequest,
-                NumberOfDays = updateLeaveRequestDto.NumberOfDays,
                 DateStart = updateLeaveRequestDto.DateStart,
                 DateEnd = updateLeaveRequestDto.DateEnd,
                 Commentary = updateLeaveRequestDto.Commentary,
-                RequestStatus = updateLeaveRequestDto.RequestStatus,
                 LeaveTypeId = updateLeaveRequestDto.LeaveTypeId
             };
             await _iLeaveRequestRepository.UpdateLeaveRequestAsync(updateLeaveRequestDto, cancellationToken);
             return leaveRequest;
         }
+
+
+        public async Task<LeaveRequest> UpdateLeaveRequestStatusServiceAsync(RequestStatusDto requestStatusDto, CancellationToken cancellationToken)
+        {
+            LeaveRequest leaveRequest = new LeaveRequest
+            {
+                Id = requestStatusDto.Id,
+                RequestStatus = requestStatusDto.RequestStatus,
+            };
+            await _iLeaveRequestRepository.UpdateRequestStatus(requestStatusDto, cancellationToken);
+            return leaveRequest;
+        }
+
+
 
         public async Task<bool> DeleteLeaveRequestAsyncServiceAsync(int reqId)
         {

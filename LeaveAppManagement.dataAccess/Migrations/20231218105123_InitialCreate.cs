@@ -71,7 +71,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DateRequest = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NumberOfDays = table.Column<int>(type: "int", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Commentary = table.Column<string>(type: "nvarchar(max)", nullable: false),
