@@ -87,7 +87,7 @@ namespace LeaveAppManagement.businessLogic.Services
             user.FirstName = usersDto.FirstName;
             user.LastName = usersDto.LastName;
             user.Email = usersDto.Email;
-            user.Password = usersDto.Password;
+            user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
             user.IsActiveUser = usersDto.IsActiveUser;

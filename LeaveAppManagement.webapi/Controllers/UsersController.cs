@@ -24,7 +24,8 @@ namespace LeaveAppManagement.webapi.Controllers
         {
             try
             {
-                return Ok(await _iusersService.GetUserServiceAsync(cancellationToken));
+                var users = await _iusersService.GetUserServiceAsync(cancellationToken);
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -48,7 +49,7 @@ namespace LeaveAppManagement.webapi.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> PostUsersInTableAsync([FromBody] CreateUserDto usersDto)
         {
-           
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid data.");
@@ -92,9 +93,9 @@ namespace LeaveAppManagement.webapi.Controllers
             try
             {
                 var del = await _iusersService.DeleteUserServiceAsync(id);
-                if (del==false)
+                if (del == false)
                 {
-                    return BadRequest("Cette donnée n'existe pas !");    
+                    return BadRequest("Cette donnée n'existe pas !");
                 }
                 return Ok(new
                 {
@@ -102,7 +103,7 @@ namespace LeaveAppManagement.webapi.Controllers
                     Message = "Utilisateur supprimé avec succès"
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
