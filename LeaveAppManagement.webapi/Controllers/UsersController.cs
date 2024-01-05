@@ -1,4 +1,5 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.dataAccess.Dto;
 
 using Microsoft.AspNetCore.Mvc;
@@ -82,6 +83,21 @@ namespace LeaveAppManagement.webapi.Controllers
                     userUpdate = user,
                     Message = "Utilisateur modifié avec succès"
                 });
+            }
+        }
+
+
+        [HttpPut("password")]
+        public async Task<IActionResult> PutUserPasswordInTableAsync([FromBody] UserPasswordUpdateDto userPasswordUpdateDto, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid data.");
+            }
+            else
+            {
+                var userPassword = await _iusersService.UserPasswordchangeServiceAsync(userPasswordUpdateDto, cancellationToken);
+                return Ok(userPassword);
             }
         }
 

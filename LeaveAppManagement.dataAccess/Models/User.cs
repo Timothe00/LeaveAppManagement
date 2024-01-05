@@ -17,5 +17,7 @@ namespace LeaveAppManagement.dataAccess.Models
         public int RoleId { get; set; }
         public virtual Role? Role { get; set; }
 
+        public ICollection<LeaveReporting>? LeaveReports { get; set; } // Relation avec la table LeaveReporting
+
     }
 }

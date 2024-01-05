@@ -30,7 +30,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                     RoleId = u.RoleId,
                     Role = new Role
                     {
-                        RoleName = r.RoleName
+                       RoleName = r.RoleName
                     },
                     PhoneNumber = u.PhoneNumber,
                     IsActiveUser = u.IsActiveUser,
@@ -65,11 +65,25 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 users.LastName = user.LastName;
                 users.FirstName = user.FirstName;
                 users.Email = user.Email;
-                users.Password = user.Password;
+               // users.Password = user.Password;
                 users.Job = user.Job;
                 users.PhoneNumber = user.PhoneNumber;
                 users.RoleId = user.RoleId;
                 users.IsActiveUser = user.IsActiveUser;
+                _dbContext.Users.Update(users);
+                await _dbContext.SaveChangesAsync();
+            }
+            return null;
+
+        }
+
+        public async Task<User> UpdateUserPasswordAsync(User user, CancellationToken cancellationToken)
+        {
+            var users = await _dbContext.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync(cancellationToken);
+            if (users != null)
+            {
+                users.Id = user.Id;
+                users.Password = user.Password;
                 _dbContext.Users.Update(users);
                 await _dbContext.SaveChangesAsync();
             }

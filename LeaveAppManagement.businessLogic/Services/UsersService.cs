@@ -3,6 +3,7 @@ using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
+using LeaveAppManagement.dataAccess.Repositories;
 
 
 namespace LeaveAppManagement.businessLogic.Services
@@ -87,13 +88,24 @@ namespace LeaveAppManagement.businessLogic.Services
             user.FirstName = usersDto.FirstName;
             user.LastName = usersDto.LastName;
             user.Email = usersDto.Email;
-            user.Password = EncryptPassword.HashPswd(usersDto.Password);
+            //user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
             user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
             await _usersRepository.UpdateUserAsync(user, cancellationToken);
             return user;
+        }
+
+        public async Task<User> UserPasswordchangeServiceAsync(UserPasswordUpdateDto userpasswordupdateDto, CancellationToken cancellationToken)
+        {
+            User passwordupdate = new User
+            {
+                Id = userpasswordupdateDto.Id,
+                Password = EncryptPassword.HashPswd(userpasswordupdateDto.Password),
+            };
+            await _usersRepository.UpdateUserPasswordAsync(passwordupdate, cancellationToken);
+            return passwordupdate;
         }
 
         public async Task<bool> DeleteUserServiceAsync(int userId)

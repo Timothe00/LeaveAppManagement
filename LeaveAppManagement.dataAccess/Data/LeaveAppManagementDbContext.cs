@@ -14,14 +14,15 @@ namespace LeaveAppManagement.dataAccess.Data
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<LeaveReporting> leaveReportings { get; set; }
         public DbSet<Role> Roles { get; set; }
 
         public LeaveAppManagementDbContext(DbContextOptions<LeaveAppManagementDbContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-1MJGFMU;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
-            //optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
+            //optionsBuilder.UseSqlServer("Server=DESKTOP-1MJGFMU;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +59,11 @@ namespace LeaveAppManagement.dataAccess.Data
             modelBuilder.Entity<LeaveType>(lt =>
             {
                 lt.HasKey(pk => pk.Id);
+            });
+
+            modelBuilder.Entity<LeaveReporting>(lrp =>
+            {
+                lrp.HasKey(pk => pk.Id);
             });
 
         }

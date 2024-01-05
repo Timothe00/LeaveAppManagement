@@ -19,16 +19,14 @@ namespace LeaveAppManagement.businessLogic.Services
         {
             IEnumerable<LeaveRequestDto> leaves = await _iLeaveRequestRepository.GetLeaveRequestAsync(cancellationToken);
 
-
             IEnumerable<LeaveRequestDto> leaveRequestDtos = leaves.Select(x => new LeaveRequestDto
             {
                 Id = x.Id,
                 DateRequest = x.DateRequest,
-                
                 DateStart = x.DateStart,
                 DateEnd = x.DateEnd,
 
-                NumberOfDays = (x.DateEnd - x.DateStart).Days,
+                NumberOfDays = CalculateWorkingDays(x.DateStart, x.DateEnd),
 
                 Commentary = x.Commentary,
                 RequestStatus = x.RequestStatus,
@@ -38,34 +36,67 @@ namespace LeaveAppManagement.businessLogic.Services
                 LastName = x.LastName,
 
             });
+
             return leaveRequestDtos;
         }
+
+        //Calcule des jours de travail excepté samedi et dimanche
+        private int CalculateWorkingDays(DateTime startDate, DateTime endDate)
+        {
+            int workingDays = 0;
+
+            DateTime currentDate = startDate;
+
+            while (currentDate <= endDate)
+            {
+                if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    workingDays++;
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return workingDays;
+        }
+
 
         public async Task<LeaveRequestDto> GetLeaveRequestByIdServicAsync(int Id, CancellationToken cancellationToken)
         {
             var leave = await _iLeaveRequestRepository.GetSingleLeaveRequestAsync(Id, cancellationToken);
 
+            DateTime currentDate = leave.DateStart.Date;
+            DateTime endDate = leave.DateEnd.Date;
+            int numberOfDays = 0;
+
+            while (currentDate <= endDate)
+            {
+                if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    numberOfDays++;
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
             LeaveRequestDto LeaveRequest = new()
             {
                 Id = leave.Id,
                 DateRequest = leave.DateRequest.Date,
-                
                 DateStart = leave.DateStart.Date,
                 DateEnd = leave.DateEnd.Date,
-
-                NumberOfDays = (leave.DateEnd - leave.DateStart).Days,
-
+                NumberOfDays = numberOfDays,
                 Commentary = leave.Commentary,
                 RequestStatus = leave.RequestStatus,
                 LeaveTypeName = leave.LeaveTypeName,
-
                 EmployeeId = leave.EmployeeId,
-
                 FirstName = leave.FirstName,
                 LastName = leave.LastName,
             };
+
             return LeaveRequest;
         }
+
 
         public async Task<LeaveRequest> AddLeaveRequestServiceAsync(PosteLeaveRequestDto leaveRequest, CancellationToken cancellationToken)
         {
