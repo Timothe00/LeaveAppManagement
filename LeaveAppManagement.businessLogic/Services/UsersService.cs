@@ -52,6 +52,7 @@ namespace LeaveAppManagement.businessLogic.Services
             user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
+            user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
 
@@ -91,6 +92,7 @@ namespace LeaveAppManagement.businessLogic.Services
             //user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
+            user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
             await _usersRepository.UpdateUserAsync(user, cancellationToken);
@@ -131,6 +133,7 @@ namespace LeaveAppManagement.businessLogic.Services
                 Password = u.Password,
                 PhoneNumber = u.PhoneNumber,
                 Job = u.Job,
+                TotaLeaveAvailable = u.TotaLeaveAvailable,
                 IsActiveUser = u.IsActiveUser,
                 RoleId = u.RoleId,
                 RoleName = u.Role.RoleName
@@ -151,17 +154,13 @@ namespace LeaveAppManagement.businessLogic.Services
                 Password = user.Password,
                 PhoneNumber = user.PhoneNumber,
                 Job = user.Job,
+                TotaLeaveAvailable = user.TotaLeaveAvailable,
                 IsActiveUser = user.IsActiveUser,
                 RoleId = user.RoleId,
                 RoleName = user.Role.RoleName
             };
             return usersDto;
         }
-
-
-
-
-
 
 
     }

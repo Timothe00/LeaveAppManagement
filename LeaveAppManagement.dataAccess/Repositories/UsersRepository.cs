@@ -32,6 +32,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                     {
                        RoleName = r.RoleName
                     },
+                    TotaLeaveAvailable = u.TotaLeaveAvailable,
                     PhoneNumber = u.PhoneNumber,
                     IsActiveUser = u.IsActiveUser,
                 }
@@ -65,8 +66,9 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 users.LastName = user.LastName;
                 users.FirstName = user.FirstName;
                 users.Email = user.Email;
-               // users.Password = user.Password;
+                //users.Password = user.Password;
                 users.Job = user.Job;
+                users.TotaLeaveAvailable = user.TotaLeaveAvailable;
                 users.PhoneNumber = user.PhoneNumber;
                 users.RoleId = user.RoleId;
                 users.IsActiveUser = user.IsActiveUser;

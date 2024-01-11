@@ -62,12 +62,15 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
 builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
 builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
+builder.Services.AddScoped<ILeaveReportingService, LeaveReportingService>();
+builder.Services.AddScoped<ILeaveBalenceService, LeaveBalanceService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
 builder.Services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
-
+builder.Services.AddScoped<ILeaveReportingRepository, LeaveReportingRepository>();
+builder.Services.AddScoped<ILeaveBalanceRepository, LeaveBalanceRepository>();
 // Add services to the container.
 
 

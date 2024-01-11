@@ -14,7 +14,7 @@ namespace LeaveAppManagement.dataAccess.Data
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }
-        public DbSet<LeaveReporting> leaveReportings { get; set; }
+        public DbSet<LeaveReporting> LeaveReportings { get; set; }
         public DbSet<Role> Roles { get; set; }
 
         public LeaveAppManagementDbContext(DbContextOptions<LeaveAppManagementDbContext> options) : base(options) { }

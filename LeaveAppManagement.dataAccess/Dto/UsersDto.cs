@@ -11,6 +11,7 @@ namespace LeaveAppManagement.dataAccess.Dto
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Job { get; set; } = string.Empty;
+        public int TotaLeaveAvailable { get; set; }
         public bool IsActiveUser { get; set; }
         public int RoleId { get; set; }
         public string? RoleName { get; set; } = null;

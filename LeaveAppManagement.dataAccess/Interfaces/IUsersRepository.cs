@@ -1,6 +1,6 @@
-﻿using LeaveAppManagement.dataAccess.Dto;
+﻿
 using LeaveAppManagement.dataAccess.Models;
-using LeaveAppManagement.dataAccess.Models.Authentification;
+
 
 namespace LeaveAppManagement.dataAccess.Interfaces
 {

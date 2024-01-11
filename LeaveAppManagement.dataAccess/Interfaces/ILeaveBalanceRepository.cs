@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using LeaveAppManagement.dataAccess.Dto;
+using LeaveAppManagement.dataAccess.Models;
 
 namespace LeaveAppManagement.dataAccess.Interfaces
 {
     public interface ILeaveBalanceRepository
     {
-
+        Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken);
     }
 }

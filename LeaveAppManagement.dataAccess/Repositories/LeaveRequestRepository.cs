@@ -15,7 +15,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
         {
             _dbContext = dbContext;
         }
-
+       
         public async Task<IEnumerable<LeaveRequestDto>> GetLeaveRequestAsync(CancellationToken cancellationToken)
         {
             var leaveRequests = await _dbContext.LeaveRequests.ToListAsync(cancellationToken);

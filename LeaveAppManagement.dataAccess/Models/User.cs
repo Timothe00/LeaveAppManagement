@@ -12,12 +12,13 @@ namespace LeaveAppManagement.dataAccess.Models
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Job { get; set; } = string.Empty;
+        public int TotaLeaveAvailable { get; set; }
         public bool IsActiveUser { get; set; }
 
         public int RoleId { get; set; }
         public virtual Role? Role { get; set; }
 
-        public ICollection<LeaveReporting>? LeaveReports { get; set; } // Relation avec la table LeaveReporting
+        public ICollection<LeaveReporting>? LeaveReports { get; set; } 
 
     }
 }
