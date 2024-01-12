@@ -6,6 +6,6 @@ namespace LeaveAppManagement.dataAccess.Interfaces
 {
     public interface ILeaveBalanceRepository
     {
-        Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken);
+        Task<LeaveBalanceDto> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken);
     }
 }

@@ -16,9 +16,9 @@ namespace LeaveAppManagement.businessLogic.Services
         }
 
 
-        public async Task<IEnumerable<LeaveBalanceDto>> GetAllLeaveBalanceService(int emplId, CancellationToken cancellationToken)
+        public async Task<LeaveBalanceDto> GetAllLeaveBalanceService(int emplId, CancellationToken cancellationToken)
         {
-            IEnumerable<LeaveBalanceDto> leaveBalance = await _ileaveBalanceRepository.GetLeaveBalanceAsync(emplId, cancellationToken);
+            LeaveBalanceDto leaveBalance = await _ileaveBalanceRepository.GetLeaveBalanceAsync(emplId, cancellationToken);
             return leaveBalance;
         }
     }

@@ -6,6 +6,6 @@ namespace LeaveAppManagement.businessLogic.Interfaces
 {
     public interface ILeaveBalenceService
     {
-        Task<IEnumerable<LeaveBalanceDto>> GetAllLeaveBalanceService(int emplId, CancellationToken cancellationToken);
+        Task<LeaveBalanceDto> GetAllLeaveBalanceService(int emplId, CancellationToken cancellationToken);
     }
 }
