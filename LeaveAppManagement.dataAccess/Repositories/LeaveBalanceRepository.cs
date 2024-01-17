@@ -1,7 +1,6 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
-using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -11,7 +10,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
         private readonly LeaveAppManagementDbContext _dbContext;
         //private readonly ILeaveReportingRepository _leaveReportingRepository;
 
-        public LeaveBalanceRepository(LeaveAppManagementDbContext dbContext, ILeaveReportingRepository leaveReportingRepository)
+        public LeaveBalanceRepository(LeaveAppManagementDbContext dbContext)
         {
             _dbContext = dbContext;
             //_leaveReportingRepository = leaveReportingRepository;
@@ -27,7 +26,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
             var acceptedLeaveDates = leaveRequests
                 .SelectMany(lr => Enumerable.Range(0, (int)(lr.DateEnd - lr.DateStart).TotalDays)
-                    .Select(offset => lr.DateStart.AddDays(offset)))
+                .Select(offset => lr.DateStart.AddDays(offset)))
                 .ToList();  // Convertir en liste côté client
 
             var user = await _dbContext.Users

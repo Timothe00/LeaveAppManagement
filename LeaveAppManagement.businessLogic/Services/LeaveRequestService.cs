@@ -18,25 +18,6 @@ namespace LeaveAppManagement.businessLogic.Services
         public async Task<IEnumerable<LeaveRequestDto>> GetLeaveRequestServiceAsync(CancellationToken cancellationToken)
         {
             IEnumerable<LeaveRequestDto> leaves = await _iLeaveRequestRepository.GetLeaveRequestAsync(cancellationToken);
-
-            //IEnumerable<LeaveRequestDto> leaveRequestDtos = leaves.Select(x => new LeaveRequestDto
-            //{
-            //    Id = x.Id,
-            //    DateRequest = x.DateRequest,
-            //    DateStart = x.DateStart,
-            //    DateEnd = x.DateEnd,
-
-            //    NumberOfDays = CalculateWorkingDays(x.DateStart, x.DateEnd),
-            //    TotalCurrentLeave = x.TotaLeaveAvailable - CalculateWorkingDays(x.DateStart, x.DateEnd),
-            //    Commentary = x.Commentary,
-            //    RequestStatus = x.RequestStatus,
-            //    LeaveTypeName = x.LeaveTypeName,
-            //    EmployeeId = x.EmployeeId,
-            //    FirstName = x.FirstName,
-            //    LastName = x.LastName,
-
-            //});
-
             return leaves;
         }
 
@@ -64,37 +45,6 @@ namespace LeaveAppManagement.businessLogic.Services
         public async Task<LeaveRequestDto> GetLeaveRequestByIdServicAsync(int Id, CancellationToken cancellationToken)
         {
             var leave = await _iLeaveRequestRepository.GetSingleLeaveRequestAsync(Id, cancellationToken);
-
-            //DateTime currentDate = leave.DateStart.Date;
-            //DateTime endDate = leave.DateEnd.Date;
-            //int numberOfDays = 0;
-
-            //while (currentDate <= endDate)
-            //{
-            //    if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
-            //    {
-            //        numberOfDays++;
-            //    }
-
-            //    currentDate = currentDate.AddDays(1);
-            //}
-
-            //LeaveRequestDto LeaveRequest = new()
-            //{
-            //    Id = leave.Id,
-            //    DateRequest = leave.DateRequest.Date,
-            //    DateStart = leave.DateStart.Date,
-            //    DateEnd = leave.DateEnd.Date,
-            //    NumberOfDays = numberOfDays,
-            //    Commentary = leave.Commentary,
-            //    RequestStatus = leave.RequestStatus,
-            //    LeaveTypeName = leave.LeaveTypeName,
-            //    TotalCurrentLeave = leave.TotalCurrentLeave - numberOfDays,
-            //    EmployeeId = leave.EmployeeId,
-            //    FirstName = leave.FirstName,
-            //    LastName = leave.LastName,
-            //};
-
             return leave;
         }
 

@@ -22,7 +22,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveBalance", b =>
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveReporting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,27 +30,30 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int>("CurrentYear")
                         .HasColumnType("int");
 
-                    b.Property<int>("LeaveRequestId")
+                    b.Property<int>("TotalApproved")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalCurrentLeave")
+                    b.Property<int>("TotalPending")
                         .HasColumnType("int");
 
-                    b.Property<int>("Years")
+                    b.Property<int>("TotalRejected")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalRequest")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("LeaveRequestId");
-
-                    b.ToTable("LeaveBalances");
+                    b.ToTable("LeaveReportings");
                 });
-
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveRequest", b =>
                 {
@@ -210,25 +213,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.HasDiscriminator().HasValue("Manager");
                 });
 
-            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveBalance", b =>
-                {
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.Employee", "Employee")
-                        .WithMany("LeaveBalances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LeaveAppManagement.dataAccess.Models.LeaveRequest", "LeaveRequest")
-                        .WithMany()
-                        .HasForeignKey("LeaveRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("LeaveRequest");
-                });
-
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.LeaveReporting", b =>
                 {
                     b.HasOne("LeaveAppManagement.dataAccess.Models.User", null)
@@ -283,8 +267,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
                 {
-                    b.Navigation("LeaveBalances");
-
                     b.Navigation("LeaveRequests");
                 });
 #pragma warning restore 612, 618
