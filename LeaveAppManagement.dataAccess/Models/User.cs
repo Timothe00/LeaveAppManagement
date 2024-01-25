@@ -15,6 +15,9 @@ namespace LeaveAppManagement.dataAccess.Models
         public int TotaLeaveAvailable { get; set; }
         public bool IsActiveUser { get; set; }
 
+        public string ResetPasswordToken { get; set; } = string.Empty;
+        public DateTime ResetPasswordExpiry { get; set; }
+
         public int RoleId { get; set; }
         public virtual Role? Role { get; set; }
 

@@ -1,8 +1,14 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.businessLogic.Interfaces.EmailModelService;
 using LeaveAppManagement.businessLogic.Services;
+using LeaveAppManagement.businessLogic.Utility;
+using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
-
+using LeaveAppManagement.dataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,20 +19,32 @@ namespace LeaveAppManagement.webapi.Controllers
     //[Authorize]
     public class UsersController : ControllerBase
     {
+
+        private readonly LeaveAppManagementDbContext _dbContext;
         private readonly IUsersService _iusersService;
-        public UsersController(IUsersService iusersService)
+        private readonly IConfiguration _config;
+        private readonly IEmailModelService _emailModelService;
+        public UsersController(
+            IUsersService iusersService, 
+            LeaveAppManagementDbContext dbContext, 
+            IConfiguration config,
+            IEmailModelService emailModelService)
         {
             _iusersService = iusersService;
+            _dbContext = dbContext;
+            _config = config;
+            _emailModelService = emailModelService;
         }
         // GET: api/<UsersController>
         //[Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken, int pageNumber = 1, int pageSize = 5)
         {
             try
             {
                 var users = await _iusersService.GetUserServiceAsync(cancellationToken);
-                return Ok(users);
+                var pagination = users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                return Ok(pagination);
             }
             catch (Exception ex)
             {
@@ -123,6 +141,73 @@ namespace LeaveAppManagement.webapi.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+
+        //POST api/<UsersController>
+        [HttpPost("send-reset-email/{email}")]
+        public async Task<IActionResult> SendEmail(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x=> x.Email == email);
+
+            if (user is null)
+            {
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    Message = "cette adresse email n'existe pas"
+                });
+            }
+
+            var tokenBytes = RandomNumberGenerator.GetBytes(64);
+            var emailToken = Convert.ToBase64String(tokenBytes);
+            user.ResetPasswordToken = emailToken;
+            user.ResetPasswordExpiry = DateTime.Now.AddMinutes(15);
+            string from = _config["EmailSettings:From"];
+            var emailModel = new EmailModel(email, "réinitialiser le mot de passe", EmailBody.EmailStringBody(email, emailToken));
+            _emailModelService.SendEmail(emailModel);
+            _dbContext.Entry(user).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return Ok(new
+            {
+                StatusCode = 200,
+                Message = "Email envoyé"
+            });
+        }
+
+        //POST api/<UsersController>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var newToken = resetPasswordDto.EmailToken.Replace(" ", "+");
+            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == resetPasswordDto.Email);
+            if (user is null)
+            {
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    Message = "cette adresse email n'existe pas"
+                });
+            }
+
+            var tokenCode = user.ResetPasswordToken;
+            DateTime emailTokenExpiry = user.ResetPasswordExpiry;
+            if (tokenCode != resetPasswordDto.EmailToken || emailTokenExpiry < DateTime.Now)
+            {
+                return BadRequest(new
+                {
+                    StatusCode = 400,
+                    Message = "lien de réinitialisation invalide"
+                });
+            }
+            user.Password = EncryptPassword.HashPswd(resetPasswordDto.NewPassword);
+            _dbContext.Entry(user).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return Ok(new
+            {
+                StatusCode = 200,
+                Message = "mot de passe réinitialisé avec succès"
+            });
         }
     }
 }

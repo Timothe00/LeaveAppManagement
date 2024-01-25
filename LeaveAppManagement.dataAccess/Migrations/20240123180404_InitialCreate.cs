@@ -51,6 +51,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     Job = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotaLeaveAvailable = table.Column<int>(type: "int", nullable: false),
                     IsActiveUser = table.Column<bool>(type: "bit", nullable: false),
+                    ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResetPasswordExpiry = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
