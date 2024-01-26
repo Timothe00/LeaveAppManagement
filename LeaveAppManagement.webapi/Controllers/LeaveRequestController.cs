@@ -1,5 +1,4 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
-using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.dataAccess.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,12 +18,14 @@ namespace LeaveAppManagement.webapi.Controllers
         }
         // GET: api/<LeaveRequestController>
         [HttpGet]
-        public async Task<IActionResult> GetAllLeaveRequestInTableAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllLeaveRequestInTableAsync(CancellationToken cancellationToken, int pageNumber = 1, int pageSize = 5)
         {
 
             try
             {
-                return Ok(await _iLeaveRequestService.GetLeaveRequestServiceAsync(cancellationToken));
+                var req = await _iLeaveRequestService.GetLeaveRequestServiceAsync(cancellationToken);
+                var pagination = req.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                return Ok(pagination);
             }
             catch (Exception ex)
             {
