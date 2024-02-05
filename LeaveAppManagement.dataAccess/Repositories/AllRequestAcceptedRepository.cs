@@ -34,8 +34,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                          {
                              Start = leave.DateStart,
                              End = leave.DateEnd,
-                             Title = leaveType.LeaveTypeName,
-                             UserName = user.FirstName + ' ' + user.LastName
+                             Title = user.FirstName + ' ' + user.LastName,
                          };
 
             return allReq;
