@@ -1,5 +1,6 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
+using LeaveAppManagement.businessLogic.Interfaces.EmailModelService;
 using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.businessLogic.Services.AuthService;
 using LeaveAppManagement.dataAccess.Data;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
 builder.Services.AddScoped<ILeaveReportingService, LeaveReportingService>();
 builder.Services.AddScoped<ILeaveBalenceService, LeaveBalanceService>();
 builder.Services.AddScoped<IAllRequestAcceptedService, AllRequestAcceptedService>();
+builder.Services.AddScoped< IEmailModelService, EmailModelService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

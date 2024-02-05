@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20240115083751_InitialCreate")]
+    [Migration("20240126110330_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -171,6 +171,13 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ResetPasswordExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
