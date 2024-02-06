@@ -5,7 +5,7 @@ namespace LeaveAppManagement.dataAccess.Models
     public class LeaveRequest
     {
         public int Id { get; set; }
-        public DateTime DateRequest { get; set; }
+        public string DateRequest { get; set; } = string.Empty;
 
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }

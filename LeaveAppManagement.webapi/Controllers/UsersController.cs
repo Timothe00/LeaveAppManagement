@@ -5,6 +5,7 @@ using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;

@@ -21,25 +21,6 @@ namespace LeaveAppManagement.businessLogic.Services
             return leaves;
         }
 
-        ////Calcule des jours de travail excepté samedi et dimanche
-        //private int CalculateWorkingDays(DateTime startDate, DateTime endDate)
-        //{
-        //    int workingDays = 0;
-
-        //    DateTime currentDate = startDate;
-
-        //    while (currentDate <= endDate)
-        //    {
-        //        if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
-        //        {
-        //            workingDays++;
-        //        }
-
-        //        currentDate = currentDate.AddDays(1);
-        //    }
-
-        //    return workingDays;
-        //}
 
 
         public async Task<LeaveRequestDto> GetLeaveRequestByIdServicAsync(int Id, CancellationToken cancellationToken)

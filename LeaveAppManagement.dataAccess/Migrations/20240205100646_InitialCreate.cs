@@ -50,7 +50,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Job = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotaLeaveAvailable = table.Column<int>(type: "int", nullable: false),
-                    IsActiveUser = table.Column<bool>(type: "bit", nullable: false),
+                    HireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResetPasswordExpiry = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -71,6 +73,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CurrentYear = table.Column<int>(type: "int", nullable: false),
                     TotalRequest = table.Column<int>(type: "int", nullable: false),
                     TotalPending = table.Column<int>(type: "int", nullable: false),
                     TotalApproved = table.Column<int>(type: "int", nullable: false),
@@ -93,7 +96,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateRequest = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateRequest = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Commentary = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -117,44 +120,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "LeaveBalances",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Years = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    TotalCurrentLeave = table.Column<int>(type: "int", nullable: false),
-                    LeaveRequestId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LeaveBalances", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_LeaveRequests_LeaveRequestId",
-                        column: x => x.LeaveRequestId,
-                        principalTable: "LeaveRequests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_Users_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LeaveBalances_EmployeeId",
-                table: "LeaveBalances",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LeaveBalances_LeaveRequestId",
-                table: "LeaveBalances",
-                column: "LeaveRequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LeaveReportings_UserId",
@@ -199,9 +164,6 @@ namespace LeaveAppManagement.dataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "LeaveBalances");
-
             migrationBuilder.DropTable(
                 name: "LeaveReportings");
 

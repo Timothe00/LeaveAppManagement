@@ -82,7 +82,7 @@ namespace LeaveAppManagement.webapi.Controllers
         {
             try
             {
-                var leaveTypeToDelete = await _iLeaveTypeService.DeleteLeaveRequestAsyncServiceAsync(leaveTypeId, cancellationToken);
+                var leaveTypeToDelete = await _iLeaveTypeService.DeleteLeaveTypeAsyncServiceAsync(leaveTypeId, cancellationToken);
                 if (leaveTypeToDelete == false)
                 {
                     return BadRequest("Cette donnnée n'existe pas !");

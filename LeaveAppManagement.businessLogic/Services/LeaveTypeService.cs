@@ -63,7 +63,7 @@ namespace LeaveAppManagement.businessLogic.Services
         }
 
 
-        public async Task<bool> DeleteLeaveRequestAsyncServiceAsync(int reqId, CancellationToken cancellationToken)
+        public async Task<bool> DeleteLeaveTypeAsyncServiceAsync(int reqId, CancellationToken cancellationToken)
         {
             if (reqId < 0)
             {

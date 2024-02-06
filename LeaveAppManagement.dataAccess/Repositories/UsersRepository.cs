@@ -34,7 +34,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                     },
                     TotaLeaveAvailable = u.TotaLeaveAvailable,
                     PhoneNumber = u.PhoneNumber,
-                    IsActiveUser = u.IsActiveUser,
+                    HireDate = u.HireDate,
                 }
             ).ToListAsync(cancellationToken);
 
@@ -66,12 +66,11 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 users.LastName = user.LastName;
                 users.FirstName = user.FirstName;
                 users.Email = user.Email;
-                //users.Password = user.Password;
+                users.HireDate = user.HireDate;
                 users.Job = user.Job;
                 users.TotaLeaveAvailable = user.TotaLeaveAvailable;
                 users.PhoneNumber = user.PhoneNumber;
                 users.RoleId = user.RoleId;
-                users.IsActiveUser = user.IsActiveUser;
                 _dbContext.Users.Update(users);
                 await _dbContext.SaveChangesAsync();
             }

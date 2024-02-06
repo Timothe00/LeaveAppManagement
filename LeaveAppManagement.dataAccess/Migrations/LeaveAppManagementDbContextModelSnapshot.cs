@@ -70,8 +70,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateRequest")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DateRequest")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
@@ -150,8 +151,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActiveUser")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Job")
                         .IsRequired()

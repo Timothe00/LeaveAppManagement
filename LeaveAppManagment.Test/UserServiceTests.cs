@@ -151,7 +151,6 @@ namespace LeaveAppManagment.Test
             PhoneNumber = "123-456-7890",
             Job = "Software Developer",
             TotaLeaveAvailable = 20,
-            IsActiveUser = true,
             RoleId = 3,
             Role = new Role { RoleName = "Employee" }
         },
@@ -165,7 +164,6 @@ namespace LeaveAppManagment.Test
             PhoneNumber = "987-654-3210",
             Job = "Project Manager",
             TotaLeaveAvailable = 25,
-            IsActiveUser = true,
             RoleId = 2,
             Role = new Role { RoleName = "Manager" }
         }
@@ -219,7 +217,6 @@ namespace LeaveAppManagment.Test
             PhoneNumber = "123-456-7890",
             Job = "Software Developer",
             TotaLeaveAvailable = 20,
-            IsActiveUser = true,
             RoleId = 3,
             Role = new Role { RoleName = "Employee" }
         },
@@ -233,7 +230,6 @@ namespace LeaveAppManagment.Test
             PhoneNumber = "987-654-3210",
             Job = "Project Manager",
             TotaLeaveAvailable = 25,
-            IsActiveUser = true,
             RoleId = 2,
             Role = new Role { RoleName = "Manager" }
         }

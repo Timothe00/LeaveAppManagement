@@ -49,8 +49,6 @@ namespace LeaveAppManagement.dataAccess.Repositories
         }
 
 
-
-
         public async Task<LeaveRequestDto> GetSingleLeaveRequestAsync(int Id, CancellationToken cancellationToken)
         {
             var leaveRequest = await _dbContext.LeaveRequests
@@ -65,7 +63,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                     (temp0, leaveType) => new LeaveRequestDto
                     {
                         Id = temp0.Leave.Id,
-                        DateRequest = temp0.Leave.DateRequest.Date,
+                        DateRequest = temp0.Leave.DateRequest,
                         DateStart = temp0.Leave.DateStart.Date,
                         DateEnd = temp0.Leave.DateEnd.Date,
                         NumberOfDays = (temp0.Leave.DateEnd - temp0.Leave.DateStart).Days,
@@ -97,7 +95,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
             if (leaveRequest!=null)
             {
                 leaveRequest.Id = updatReq.Id;
-                leaveRequest.DateRequest = updatReq.DateRequest.Date;
+                leaveRequest.DateRequest = updatReq.DateRequest;
                 leaveRequest.DateStart = updatReq.DateStart.Date;
                 leaveRequest.DateEnd = updatReq.DateEnd.Date;
                 leaveRequest.Commentary = updatReq.Commentary;

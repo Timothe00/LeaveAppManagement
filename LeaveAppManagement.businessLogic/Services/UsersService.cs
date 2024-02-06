@@ -53,8 +53,8 @@ namespace LeaveAppManagement.businessLogic.Services
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
             user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
-            user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
+            user.HireDate = usersDto.HireDate;
 
             return await _usersRepository.AddUserAsync(user);
         }
@@ -89,11 +89,10 @@ namespace LeaveAppManagement.businessLogic.Services
             user.FirstName = usersDto.FirstName;
             user.LastName = usersDto.LastName;
             user.Email = usersDto.Email;
-            //user.Password = EncryptPassword.HashPswd(usersDto.Password);
+            user.HireDate = usersDto.HireDate;
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
             user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
-            user.IsActiveUser = usersDto.IsActiveUser;
             user.RoleId = usersDto.RoleId;
             await _usersRepository.UpdateUserAsync(user, cancellationToken);
             return user;
@@ -134,9 +133,9 @@ namespace LeaveAppManagement.businessLogic.Services
                 PhoneNumber = u.PhoneNumber,
                 Job = u.Job,
                 TotaLeaveAvailable = u.TotaLeaveAvailable,
-                IsActiveUser = u.IsActiveUser,
                 RoleId = u.RoleId,
-                RoleName = u.Role.RoleName
+                RoleName = u.Role.RoleName,
+                HireDate = u.HireDate,
             });
             return usersdto;
         }
@@ -155,9 +154,9 @@ namespace LeaveAppManagement.businessLogic.Services
                 PhoneNumber = user.PhoneNumber,
                 Job = user.Job,
                 TotaLeaveAvailable = user.TotaLeaveAvailable,
-                IsActiveUser = user.IsActiveUser,
                 RoleId = user.RoleId,
-                RoleName = user.Role.RoleName
+                RoleName = user.Role.RoleName,
+                HireDate = user.HireDate,
             };
             return usersDto;
         }

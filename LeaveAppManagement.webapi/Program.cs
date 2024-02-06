@@ -67,6 +67,7 @@ builder.Services.AddScoped<ILeaveReportingService, LeaveReportingService>();
 builder.Services.AddScoped<ILeaveBalenceService, LeaveBalanceService>();
 builder.Services.AddScoped<IAllRequestAcceptedService, AllRequestAcceptedService>();
 builder.Services.AddScoped< IEmailModelService, EmailModelService>();
+builder.Services.AddScoped<IExportExcelService, ExportExcelService>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

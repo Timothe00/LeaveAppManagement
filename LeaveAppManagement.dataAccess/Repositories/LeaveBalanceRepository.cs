@@ -1,6 +1,7 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
+using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -15,6 +16,41 @@ namespace LeaveAppManagement.dataAccess.Repositories
             _dbContext = dbContext;
             //_leaveReportingRepository = leaveReportingRepository;
         }
+
+
+
+        public async Task<IEnumerable<LeaveBalanceDto>> GetAllEmployeeLeaveBalanceAsync(CancellationToken cancellationToken)
+        {
+            // Récupération des données de la base de données de manière asynchrone
+            var leaveRequests = await _dbContext.LeaveRequests
+                .Where(lr => lr.RequestStatus == "Accepted")
+                .ToListAsync(cancellationToken);
+
+            var acceptedLeaveDates = leaveRequests
+                .SelectMany(lr => Enumerable.Range(0, (int)(lr.DateEnd - lr.DateStart).TotalDays)
+                .Select(offset => lr.DateStart.AddDays(offset)))
+                .ToList();  // Convertir en liste côté client
+
+            var user = await _dbContext.Users
+                .Where(user=> user.RoleId == 3).FirstOrDefaultAsync(cancellationToken);
+
+
+            // Calculer le total des jours acceptés
+            int totalLeaveDays = acceptedLeaveDates.Count;
+
+            // Créer un seul objet LeaveBalanceDto
+            var leaveBalanceDto = new LeaveBalanceDto
+            {
+                EmployeeName = user?.FirstName + ' ' + user?.LastName ?? "N/A",
+                TotaLeaveAvailable = user?.TotaLeaveAvailable ?? 0,
+                TotalCurrentLeave = user?.TotaLeaveAvailable - totalLeaveDays ?? 0,
+                TotalLeaveUsed = totalLeaveDays,
+            };
+
+            return new List<LeaveBalanceDto> { leaveBalanceDto };
+        }
+
+
 
 
         public async Task<LeaveBalanceDto> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken)

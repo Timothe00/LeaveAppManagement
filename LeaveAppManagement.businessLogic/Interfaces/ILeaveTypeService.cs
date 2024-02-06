@@ -14,6 +14,6 @@ namespace LeaveAppManagement.businessLogic.Interfaces
         Task<LeaveTypeDto> GetLeaveTypeByIdServiceAsync(int id, CancellationToken cancellationToken);
         Task<LeaveType> AddLeaveTypeServiceAsync(LeaveTypeDto leaveTypedto, CancellationToken cancellationToken);
         Task<LeaveType> UpdateLeaveTypeServiceAsync(LeaveTypeDto leaveTypedto, CancellationToken cancellationToken);
-        Task<bool> DeleteLeaveRequestAsyncServiceAsync(int reqId, CancellationToken cancellationToken);
+        Task<bool> DeleteLeaveTypeAsyncServiceAsync(int reqId, CancellationToken cancellationToken);
     }
 }
