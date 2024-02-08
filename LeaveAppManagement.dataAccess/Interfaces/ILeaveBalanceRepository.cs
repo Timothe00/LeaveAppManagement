@@ -1,5 +1,4 @@
-﻿
-using LeaveAppManagement.dataAccess.Dto;
+﻿using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Models;
 
 namespace LeaveAppManagement.dataAccess.Interfaces
@@ -7,6 +6,6 @@ namespace LeaveAppManagement.dataAccess.Interfaces
     public interface ILeaveBalanceRepository
     {
         Task<LeaveBalanceDto> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken);
-        Task<IEnumerable<LeaveBalanceDto>> GetAllEmployeeLeaveBalanceAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<LeaveBalanceDto>> GetAllLeaveBalanceForAllEmployeeAsync(CancellationToken cancellationToken);
     }
 }

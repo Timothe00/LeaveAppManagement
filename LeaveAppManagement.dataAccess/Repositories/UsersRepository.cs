@@ -1,4 +1,6 @@
-﻿using LeaveAppManagement.dataAccess.Data;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using LeaveAppManagement.dataAccess.Data;
+using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,8 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken)
         {
+            var currentMonth = DateTime.Now;
+
             var usersWithRoleNames = await (
                 from u in _dbContext.Users
                 join r in _dbContext.Roles on u.RoleId equals r.Id
@@ -27,19 +31,35 @@ namespace LeaveAppManagement.dataAccess.Repositories
                     Email = u.Email,
                     Password = u.Password,
                     Job = u.Job,
+                    HireDate = u.HireDate,
                     RoleId = u.RoleId,
                     Role = new Role
                     {
-                       RoleName = r.RoleName
+                        RoleName = r.RoleName
                     },
-                    TotaLeaveAvailable = u.TotaLeaveAvailable,
+                    TotaLeaveAvailable = CalculateTotaLeaveAvailable(u.HireDate, currentMonth),
                     PhoneNumber = u.PhoneNumber,
-                    HireDate = u.HireDate,
                 }
             ).ToListAsync(cancellationToken);
 
             return usersWithRoleNames;
         }
+
+        // Méthode pour calculer le TotaLeaveAvailable en fonction de la durée de service
+        private static double CalculateTotaLeaveAvailable(DateTime hireDate, DateTime currentMonth)
+        {
+            // Calcul de la différence entre les deux dates
+            TimeSpan difference = currentMonth - hireDate;
+
+            // Obtention du nombre total de mois (approximation)
+            int totalMonths = (int)(difference.TotalDays / 30.44); // Environ 30.44 jours par mois
+
+            // Calcul du TotaLeaveAvailable en fonction de la durée de service
+            double totaLeaveAvailable = Math.Max(totalMonths * 2.5, 0); // Assure que le résultat est positif
+
+            return totaLeaveAvailable;
+        }
+
 
 
 
@@ -68,7 +88,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 users.Email = user.Email;
                 users.HireDate = user.HireDate;
                 users.Job = user.Job;
-                users.TotaLeaveAvailable = user.TotaLeaveAvailable;
+                //users.TotaLeaveAvailable = user.TotaLeaveAvailable;
                 users.PhoneNumber = user.PhoneNumber;
                 users.RoleId = user.RoleId;
                 _dbContext.Users.Update(users);

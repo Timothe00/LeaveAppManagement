@@ -25,11 +25,11 @@ namespace LeaveAppManagement.webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportToExcel( CancellationToken cancellationToken)
         {
-            var leaveRequestDtos = await _leaveRequestService.GetLeaveRequestServiceAsync(cancellationToken); // Assurez-vous d'avoir une méthode pour récupérer toutes les demandes de congé
+            var leaveRequestDtos = await _leaveRequestService.GetLeaveRequestServiceAsync(cancellationToken); // la méthode GetLeaveRequestServiceAsync() pour récupérer toutes les demandes de congé
 
-            var leaveBalance = await _leaveBalenceService.GetLeaveBalanceServiceForEmployeeAsync(cancellationToken).ConfigureAwait(false);
+            var leaveBalance = await _leaveBalenceService.GetLeaveBalanceForEmployeesServiceAsync(cancellationToken);
 
-            var fileName = "Rapport"; // Vous pouvez ajuster le nom du fichier si nécessaire
+            var fileName = "Rapport"; // nom du fichier
 
             // Utilisez la méthode GenerateExcel de votre service
             return _exportExcelService.GenerateExcel(fileName, leaveRequestDtos, leaveBalance);

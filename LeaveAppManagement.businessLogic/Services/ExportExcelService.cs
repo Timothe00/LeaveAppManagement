@@ -1,6 +1,4 @@
-﻿
-
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.dataAccess.Dto;
@@ -12,16 +10,13 @@ namespace LeaveAppManagement.businessLogic.Services
 {
     public class ExportExcelService: IExportExcelService
     {
-        private readonly ILeaveRequestService _leaveRequestService;
-        private readonly ILeaveReportingService _leaveReportingService;
 
-        public ExportExcelService(ILeaveRequestService leaveRequestService, ILeaveReportingService leaveReportingService)
-        {
-            _leaveRequestService = leaveRequestService;
-            _leaveReportingService = leaveReportingService;  
+
+        public ExportExcelService()
+        { 
         }
 
-        public FileResult GenerateExcel(string fileName, IEnumerable<LeaveRequestDto> leaveRequestDtos, IEnumerable<LeaveBalanceDto> leaveBalanceDtos)
+        public FileResult GenerateExcel(string fileName, IEnumerable<LeaveRequestDto> leaveRequestDtos, IEnumerable<LeaveBalanceDto> LeaveBalanceDto)
         {
             using (XLWorkbook xLWorkbook = new XLWorkbook())
             {
@@ -43,9 +38,9 @@ namespace LeaveAppManagement.businessLogic.Services
                 }
                 xLWorkbook.Worksheets.Add(leaveRequestTable, "Demandes de congé");
 
-                // Deuxième feuille pour LeaveBalanceDto
+                //Deuxième feuille pour LeaveBalanceDto
                 DataTable leaveBalanceTable = CreateDataTableForLeaveBalance();
-                foreach (var balance in leaveBalanceDtos)
+                foreach (var balance in LeaveBalanceDto)
                 {
                     leaveBalanceTable.Rows
                         .Add(
@@ -98,7 +93,7 @@ namespace LeaveAppManagement.businessLogic.Services
 
         private FileResult File(byte[] bytes, string contentType, string fileName)
         {
-            // Implémentez la logique pour créer et retourner un FileResult avec les paramètres fournis
+            //la logique pour créer et retourner un FileResult avec les paramètres fournis
             return new FileContentResult(bytes, contentType)
             {
                 FileDownloadName = fileName

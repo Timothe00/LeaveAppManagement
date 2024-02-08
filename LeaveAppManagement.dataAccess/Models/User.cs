@@ -12,7 +12,7 @@ namespace LeaveAppManagement.dataAccess.Models
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Job { get; set; } = string.Empty;
-        public int TotaLeaveAvailable { get; set; }
+        public double TotaLeaveAvailable { get; set; }
         public DateTime HireDate { get; set; }
 
         public string ResetPasswordToken { get; set; } = string.Empty;

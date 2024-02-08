@@ -1,4 +1,5 @@
-﻿using LeaveAppManagement.businessLogic.Interfaces;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
@@ -52,7 +53,7 @@ namespace LeaveAppManagement.businessLogic.Services
             user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
-            user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
+            //user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.RoleId = usersDto.RoleId;
             user.HireDate = usersDto.HireDate;
 
@@ -92,7 +93,7 @@ namespace LeaveAppManagement.businessLogic.Services
             user.HireDate = usersDto.HireDate;
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
-            user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
+           // user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.RoleId = usersDto.RoleId;
             await _usersRepository.UpdateUserAsync(user, cancellationToken);
             return user;
@@ -119,31 +120,51 @@ namespace LeaveAppManagement.businessLogic.Services
             return true;
         }
 
+
+
         public async Task<IEnumerable<UsersDto>> GetUserServiceAsync(CancellationToken cancellationToken)
         {
             IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
+            var currentMonth = DateTime.Now.Month;
 
-            IEnumerable<UsersDto> usersdto = users.Select(u => new UsersDto
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email,
-                Password = u.Password,
-                PhoneNumber = u.PhoneNumber,
-                Job = u.Job,
-                TotaLeaveAvailable = u.TotaLeaveAvailable,
-                RoleId = u.RoleId,
-                RoleName = u.Role.RoleName,
-                HireDate = u.HireDate,
-            });
+            IEnumerable<UsersDto> usersdto = users.Select(u => MapUserToDto(u, currentMonth));
+
             return usersdto;
         }
+
+        private UsersDto MapUserToDto(User user, int currentMonth)
+        {
+            return new UsersDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                PhoneNumber = user.PhoneNumber,
+                Job = user.Job,
+                TotaLeaveAvailable = CalculateTotaLeaveAvailable(user.HireDate, currentMonth),
+                RoleId = user.RoleId,
+                RoleName = user.Role?.RoleName ?? "N/A",
+                HireDate = user.HireDate,
+            };
+        }
+
+        private static double CalculateTotaLeaveAvailable(DateTime hireDate, int currentMonth)
+        {
+            var difference = DateTime.Now.Year - hireDate.Year;
+            int totalMonths = difference * 12; // la difference d'année est multipliée par les 12 mois de l'année
+            double totaLeaveDaysAvailable = Math.Max(totalMonths * 2.5, 0); //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
+            return totaLeaveDaysAvailable;
+        }
+
+
 
         public async Task<UsersDto> GetUserServiceByIdAsync(int id, CancellationToken cancellationToken)
         {
             IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
             var user = users.Where(us => us.Id == id).FirstOrDefault();
+            var CurrentMonth = DateTime.Now.Month;
             UsersDto usersDto = new UsersDto
             {
                 Id = user.Id,
@@ -153,7 +174,7 @@ namespace LeaveAppManagement.businessLogic.Services
                 Password = user.Password,
                 PhoneNumber = user.PhoneNumber,
                 Job = user.Job,
-                TotaLeaveAvailable = user.TotaLeaveAvailable,
+                TotaLeaveAvailable = CalculateTotaLeaveAvailable(user.HireDate, CurrentMonth),
                 RoleId = user.RoleId,
                 RoleName = user.Role.RoleName,
                 HireDate = user.HireDate,

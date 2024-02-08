@@ -1,5 +1,6 @@
 ﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Services;
+using LeaveAppManagement.dataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -31,11 +32,18 @@ namespace LeaveAppManagement.webapi.Controllers
         }
 
         // GET api/<LeaveBalanceController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllEmployeeBalance(CancellationToken cancellationToken)
+        {
+            try
+            {
+                return Ok(await _ileaveBalenceService.GetLeaveBalanceForEmployeesServiceAsync(cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

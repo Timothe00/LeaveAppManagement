@@ -180,8 +180,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotaLeaveAvailable")
-                        .HasColumnType("int");
+                    b.Property<double>("TotaLeaveAvailable")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

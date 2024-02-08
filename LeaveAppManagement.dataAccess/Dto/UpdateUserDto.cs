@@ -14,7 +14,7 @@ namespace LeaveAppManagement.dataAccess.Dto
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Job { get; set; } = string.Empty;
-        public int TotaLeaveAvailable { get; set; }
+        //public int TotaLeaveAvailable { get; set; }
         public DateTime HireDate { get; set; }
         public int RoleId { get; set; }
     }

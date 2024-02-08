@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20240205100646_InitialCreate")]
+    [Migration("20240207143551_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -183,8 +183,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotaLeaveAvailable")
-                        .HasColumnType("int");
+                    b.Property<double>("TotaLeaveAvailable")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

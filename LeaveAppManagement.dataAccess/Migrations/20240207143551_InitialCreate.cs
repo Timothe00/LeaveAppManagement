@@ -49,7 +49,7 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Job = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotaLeaveAvailable = table.Column<int>(type: "int", nullable: false),
+                    TotaLeaveAvailable = table.Column<double>(type: "float", nullable: false),
                     HireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ResetPasswordExpiry = table.Column<DateTime>(type: "datetime2", nullable: false),

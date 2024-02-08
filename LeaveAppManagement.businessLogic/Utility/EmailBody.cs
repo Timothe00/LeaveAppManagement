@@ -16,7 +16,7 @@ namespace LeaveAppManagement.businessLogic.Utility
             </head>
 
             <body style="" margin:0; padding:0; font-family: Arial, Helvetica, sans-serif;"">
-                <div style="" height: auto; background: linear-gradient(to top, #c9c9ff 50%, #6e6ef6 98%) no-repeat; width:
+                <div style="" height: auto; background: linear-gradient(to top, #EE8B27 50%, #F1A252 98%) no-repeat; width:
                     400px;padding: 30px"">
                     <div>
                         <h1>Réinitialisez votre mot de passe</h1>
