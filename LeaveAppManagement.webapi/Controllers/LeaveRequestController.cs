@@ -1,5 +1,9 @@
-﻿using LeaveAppManagement.businessLogic.Interfaces;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using LeaveAppManagement.businessLogic.Interfaces;
+using LeaveAppManagement.businessLogic.Interfaces.EmailModelService;
+using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Dto;
+using LeaveAppManagement.dataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,10 +15,12 @@ namespace LeaveAppManagement.webapi.Controllers
     public class LeaveRequestController : ControllerBase
     {
         private readonly ILeaveRequestService _iLeaveRequestService;
+        private readonly IEmailModelService _emailModelService;
 
-        public LeaveRequestController(ILeaveRequestService iLeaveRequestService)
+        public LeaveRequestController(ILeaveRequestService iLeaveRequestService, IEmailModelService emailModelService)
         {
             _iLeaveRequestService = iLeaveRequestService;
+            _emailModelService = emailModelService;
         }
         // GET: api/<LeaveRequestController>
         [HttpGet]
@@ -62,10 +68,25 @@ namespace LeaveAppManagement.webapi.Controllers
             }
             else
             {
-                var req = await _iLeaveRequestService.AddLeaveRequestServiceAsync(leaveRequestDto, cancellationToken);
-                return Ok(req);
+                try
+                {
+                    var req = await _iLeaveRequestService.AddLeaveRequestServiceAsync(leaveRequestDto, cancellationToken);
+
+                    // Call the SendEmailToConfirm method
+                    var emailModel = new EmailModel("yaofrancistimothee@gmail.com", "Demande de congé en attente de confirmation", EmailBody.EmailNotificationBody());
+                    _emailModelService.SendEmailToConfirm(emailModel, req.EmployeeId, cancellationToken);
+
+                    return Ok(req);
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions appropriately, log, or return an error response.
+                    return StatusCode(500, $"An error occurred: {ex.Message}");
+                }
             }
         }
+
+
 
         // PUT api/<LeaveRequestController>/5
         [HttpPut("{id}")]

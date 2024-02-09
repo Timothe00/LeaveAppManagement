@@ -163,7 +163,7 @@ namespace LeaveAppManagement.webapi.Controllers
             var tokenBytes = RandomNumberGenerator.GetBytes(64);
             var emailToken = Convert.ToBase64String(tokenBytes);
             user.ResetPasswordToken = emailToken;
-            user.ResetPasswordExpiry = DateTime.Now.AddMinutes(15);
+            user.ResetPasswordExpiry = DateTime.Now.AddMinutes(10);
             string from = _config["EmailSettings:From"];
             var emailModel = new EmailModel(email, "réinitialiser le mot de passe", EmailBody.EmailStringBody(email, emailToken));
             _emailModelService.SendEmail(emailModel);
