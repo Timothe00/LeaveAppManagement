@@ -52,7 +52,7 @@ namespace LeaveAppManagement.businessLogic.Services
         }
 
 
-        public async void SendEmailToConfirm(EmailModel emailModel, int id, CancellationToken cancellationToken)
+        public async Task SendEmailToConfirm(EmailModel emailModel, int id, CancellationToken cancellationToken)
         {
             var emailMessage = new MimeMessage();
             var user= await _usersService.GetUserServiceByIdAsync(id, cancellationToken);
@@ -74,9 +74,9 @@ namespace LeaveAppManagement.businessLogic.Services
             {
                 try
                 {
-                    client.Connect(_config["EmailSettings:SmtpServer"], 465, true);
-                    client.Authenticate(_config["EmailSettings:From"], _config["EmailSettings:Password"]);
-                    client.Send(emailMessage);
+                    await client.ConnectAsync(_config["EmailSettings:SmtpServer"], 465, true);
+                    await client.AuthenticateAsync(_config["EmailSettings:From"], _config["EmailSettings:Password"]);
+                    await client.SendAsync(emailMessage);
                 }
                 catch (Exception)
                 {
@@ -84,7 +84,7 @@ namespace LeaveAppManagement.businessLogic.Services
                 }
                 finally
                 {
-                    client.Disconnect(true);
+                    await client.DisconnectAsync(true);
                     client.Dispose();
                 }
             }

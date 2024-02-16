@@ -24,14 +24,14 @@ namespace LeaveAppManagement.webapi.Controllers
         }
         // GET: api/<LeaveRequestController>
         [HttpGet]
-        public async Task<IActionResult> GetAllLeaveRequestInTableAsync(CancellationToken cancellationToken, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllLeaveRequestInTableAsync(CancellationToken cancellationToken)
         {
 
             try
             {
                 var req = await _iLeaveRequestService.GetLeaveRequestServiceAsync(cancellationToken);
-                var pagination = req.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                return Ok(pagination);
+
+                return Ok(req);
             }
             catch (Exception ex)
             {
@@ -72,16 +72,16 @@ namespace LeaveAppManagement.webapi.Controllers
                 {
                     var req = await _iLeaveRequestService.AddLeaveRequestServiceAsync(leaveRequestDto, cancellationToken);
 
-                    // Call the SendEmailToConfirm method
+                    // Appel de la méthode SendEmailToConfirm
                     var emailModel = new EmailModel("yaofrancistimothee@gmail.com", "Demande de congé en attente de confirmation", EmailBody.EmailNotificationBody());
-                    _emailModelService.SendEmailToConfirm(emailModel, req.EmployeeId, cancellationToken);
+                    await _emailModelService.SendEmailToConfirm(emailModel, req.EmployeeId, cancellationToken);
 
                     return Ok(req);
                 }
                 catch (Exception ex)
                 {
-                    // Handle exceptions appropriately, log, or return an error response.
-                    return StatusCode(500, $"An error occurred: {ex.Message}");
+                    // Gère les exceptions de manière appropriée, enregistre ou renvoie une réponse d'erreur.
+                    return StatusCode(500, $"Une erreur s'est produite : {ex.Message}");
                 }
             }
         }

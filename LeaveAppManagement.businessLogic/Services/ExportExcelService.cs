@@ -46,8 +46,8 @@ namespace LeaveAppManagement.businessLogic.Services
                         .Add(
                         balance.EmployeeName,
                         balance.TotaLeaveAvailable,
-                        balance.TotalLeaveUsed,
-                        balance.TotalCurrentLeave);
+                        balance.TotalCurrentLeave,
+                        balance.TotalLeaveUsed);
                 }
                 xLWorkbook.Worksheets.Add(leaveBalanceTable, "Solde Congé");
 

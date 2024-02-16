@@ -39,13 +39,12 @@ namespace LeaveAppManagement.webapi.Controllers
         // GET: api/<UsersController>
         //[Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllUserInTableAsync(CancellationToken cancellationToken)
         {
             try
             {
                 var users = await _iusersService.GetUserServiceAsync(cancellationToken);
-                var pagination = users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                return Ok(pagination);
+                return Ok(users);
             }
             catch (Exception ex)
             {

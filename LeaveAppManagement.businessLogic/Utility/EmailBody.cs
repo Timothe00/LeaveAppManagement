@@ -57,9 +57,9 @@ namespace LeaveAppManagement.businessLogic.Utility
                         <hr>
                         <p>Vous avez reçu une nouvelle demande de congé.</p>
                         <p>Veuillez appuyer sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
-                        <a href="" "" target="" _blank"" style=""
+                        <a href=""http://localhost:4200/auth/login"" target="" _blank"" style=""
                             background:#0d6efc;color:white;border-radius: 4px;display:block;margin:0 auto;width:
-                            50%;text-align:center;text-decoration:none"">réinitialiser le mot de passe</a>
+                            50%;text-align:center;text-decoration:none"">Aller vers l'evenement</a>
                         <p>Cordialement, <br><br>
                             InFi SoFtWare</p>
                     </div>

@@ -101,7 +101,7 @@ namespace LeaveAppManagment.Test
             var updateLeaveRequestDto = new UpdateLeaveRequestDto
             {
                 Id = 1,
-                DateRequest = "04/02/2024",
+
                 DateStart = DateTime.Now.AddDays(1),
                 DateEnd = DateTime.Now.AddDays(5),
                 Commentary = "commentaire mis à jour",
@@ -115,7 +115,7 @@ namespace LeaveAppManagment.Test
             var originalLeaveRequest = new LeaveRequestDto
             {
                 Id = updateLeaveRequestDto.Id,
-                DateRequest = "04/02/2024",
+
                 DateStart = DateTime.Now.AddDays(-1),
                 DateEnd = DateTime.Now.AddDays(3),
                 Commentary = "commentaire original",
