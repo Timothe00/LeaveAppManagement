@@ -71,11 +71,9 @@ namespace LeaveAppManagement.webapi.Controllers
                 try
                 {
                     var req = await _iLeaveRequestService.AddLeaveRequestServiceAsync(leaveRequestDto, cancellationToken);
-
                     // Appel de la méthode SendEmailToConfirm
                     var emailModel = new EmailModel("yaofrancistimothee@gmail.com", "Demande de congé en attente de confirmation", EmailBody.EmailNotificationBody());
                     await _emailModelService.SendEmailToConfirm(emailModel, req.EmployeeId, cancellationToken);
-
                     return Ok(req);
                 }
                 catch (Exception ex)
@@ -85,8 +83,6 @@ namespace LeaveAppManagement.webapi.Controllers
                 }
             }
         }
-
-
 
         // PUT api/<LeaveRequestController>/5
         [HttpPut("{id}")]

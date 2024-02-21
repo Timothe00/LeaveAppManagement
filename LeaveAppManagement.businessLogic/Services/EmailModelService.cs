@@ -55,16 +55,19 @@ namespace LeaveAppManagement.businessLogic.Services
         public async Task SendEmailToConfirm(EmailModel emailModel, int id, CancellationToken cancellationToken)
         {
             var emailMessage = new MimeMessage();
-            var user= await _usersService.GetUserServiceByIdAsync(id, cancellationToken);
+            var user = await _usersService.GetUserServiceByIdAsync(id, cancellationToken);
             var mail = user.Email;
-
             var name = $"{user.FirstName} {user.LastName}";
-            var from = mail;
+            var from = new MailboxAddress(name, mail);
 
             var to = _config["EmailSettings:From"];
-            emailMessage.From.Add(new MailboxAddress(name, from));
-            emailMessage.To.Add(new MailboxAddress("InFi SoFtware", to));
+            emailMessage.From.Add(from);
+            emailMessage.To.Add(new MailboxAddress("InFi SoFware", to));
             emailMessage.Subject = emailModel.Subject;
+
+            // Ajoutez l'adresse e-mail de l'expéditeur dans le champ "Reply-To"
+            emailMessage.ReplyTo.Add(from);
+
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 Text = string.Format(emailModel.Content)
@@ -78,9 +81,10 @@ namespace LeaveAppManagement.businessLogic.Services
                     await client.AuthenticateAsync(_config["EmailSettings:From"], _config["EmailSettings:Password"]);
                     await client.SendAsync(emailMessage);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw;
+                    // Gérez les exceptions ici
+                    Console.WriteLine(ex.Message);
                 }
                 finally
                 {
@@ -89,5 +93,6 @@ namespace LeaveAppManagement.businessLogic.Services
                 }
             }
         }
+
     }
 }

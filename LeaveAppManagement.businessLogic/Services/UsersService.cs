@@ -152,9 +152,9 @@ namespace LeaveAppManagement.businessLogic.Services
 
         private static double CalculateTotaLeaveAvailable(DateTime hireDate, int currentMonth)
         {
-            var difference = DateTime.Now.Year - hireDate.Year;
-            int totalMonths = difference * 12; // la difference d'année est multipliée par les 12 mois de l'année
-            double totaLeaveDaysAvailable = Math.Max(totalMonths * 2.5, 0); //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
+            var difference = (DateTime.Now - hireDate).Days/30.0;
+           
+            double totaLeaveDaysAvailable = Math.Ceiling(difference) * 2.5; //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
             return totaLeaveDaysAvailable;
         }
 

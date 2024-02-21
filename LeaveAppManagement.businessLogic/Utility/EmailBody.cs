@@ -56,7 +56,7 @@ namespace LeaveAppManagement.businessLogic.Utility
                         <h1>Demande de congé en attente de confirmation</h1>
                         <hr>
                         <p>Vous avez reçu une nouvelle demande de congé.</p>
-                        <p>Veuillez appuyer sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
+                        <p>Veuillez appuyer sur le bouton ci-dessous pour l'approuver.</p>
                         <a href=""http://localhost:4200/auth/login"" target="" _blank"" style=""
                             background:#0d6efc;color:white;border-radius: 4px;display:block;margin:0 auto;width:
                             50%;text-align:center;text-decoration:none"">Aller vers l'evenement</a>

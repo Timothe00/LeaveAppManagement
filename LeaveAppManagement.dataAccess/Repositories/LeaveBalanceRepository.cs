@@ -42,27 +42,19 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
                 // Calculer le total des jours acceptés
                 int totalLeaveDays = acceptedLeaveDates.Count;
-
-                // Obtenir le mois actuel
-                var currentMonth = DateTime.Now.Month;
-
-                // Obtenir le mois d'embauche
-                var hireMonth = user.HireDate.Month;
-
                 // Obtenir l'année d'embauche
-                var hireYear = user.HireDate.Year;
+                var hireYear = user.HireDate;
 
-                // Ajuster le calcul en fonction de l'année d'embauche
-                var monthsOfWork = (DateTime.Now.Year - hireYear) * 12;
+                var monthsOfWork = (DateTime.Now - hireYear).Days/30;
 
                 // Créer un objet LeaveBalanceDto pour chaque utilisateur
                 var leaveBalanceDto = new LeaveBalanceDto
                 {
                     EmployeeId = user.Id,
                     EmployeeName = $"{user.FirstName} {user.LastName}",
-                    TotaLeaveAvailable = monthsOfWork * 2.5,
+                    TotaLeaveAvailable = CalculateTotaLeaveAvailable(hireYear),
                     TotalLeaveUsed = totalLeaveDays,
-                    TotalCurrentLeave = (monthsOfWork * 2.5) - totalLeaveDays,
+                    TotalCurrentLeave = (monthsOfWork) - totalLeaveDays,
                 };
 
                 leaveBalanceDtos.Add(leaveBalanceDto);
@@ -71,9 +63,13 @@ namespace LeaveAppManagement.dataAccess.Repositories
             return leaveBalanceDtos;
         }
 
+        private static double CalculateTotaLeaveAvailable(DateTime hireDate)
+        {
+            var difference = (DateTime.Now - hireDate).Days / 30.0;
 
-
-
+            double totaLeaveDaysAvailable = Math.Ceiling(difference) * 2.5; //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
+            return totaLeaveDaysAvailable;
+        }
 
         public async Task<LeaveBalanceDto> GetLeaveBalanceAsync(int employeeId, CancellationToken cancellationToken)
         {
@@ -100,40 +96,23 @@ namespace LeaveAppManagement.dataAccess.Repositories
             // Calculer le total des jours acceptés
             int totalLeaveDays = acceptedLeaveDates.Count;
 
-            // Obtenir le mois actuel
-            var currentMonth = DateTime.Now.Month;
-
-            // Obtenir le mois d'embauche
-            var hireMonth = user.HireDate.Month;
-
             // Obtenir l'année d'embauche
-            var hireYear = user.HireDate.Year;
+            var hireYear = user.HireDate;
 
-            // Ajuster le calcul en fonction de l'année d'embauche
-            var monthsOfWork = (DateTime.Now.Year - hireYear) * 12;
+            var monthsOfWork = (DateTime.Now - hireYear).Days / 30;
 
-            // Créer un seul objet LeaveBalanceDto
+            // Créer un objet LeaveBalanceDto pour chaque utilisateur
             var leaveBalanceDto = new LeaveBalanceDto
             {
-                TotaLeaveAvailable = monthsOfWork * 2.5,
-                TotalLeaveUsed = totalLeaveDays,
-                TotalCurrentLeave = (monthsOfWork * 2.5) - totalLeaveDays,
+                EmployeeId = user.Id,
                 EmployeeName = $"{user.FirstName} {user.LastName}",
-                EmployeeId = employeeId
+                TotaLeaveAvailable = CalculateTotaLeaveAvailable(hireYear),
+                TotalLeaveUsed = totalLeaveDays,
+                TotalCurrentLeave = CalculateTotaLeaveAvailable(hireYear) - totalLeaveDays,
             };
 
             return leaveBalanceDto;
         }
-
-
-
-
-
-
-
-
-
-
 
     }
 }

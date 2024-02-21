@@ -47,7 +47,7 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
             {
                 if (user.Password == EncryptPassword.HashPswd(userLogin.Password))
                 {
-                    return GenerateToken(user, cancellationToken);
+                    return GenerateToken(user);
                 }
                 return null;
             }
@@ -55,8 +55,7 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
             return null;
         }
 
-
-        public string GenerateToken(User user, CancellationToken cancellationToken)
+        public string GenerateToken(User user)
         {
             string? RoleName = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.RoleName).FirstOrDefault();
             var tokenHandler = new JwtSecurityTokenHandler();

@@ -1,4 +1,5 @@
-﻿using LeaveAppManagement.businessLogic.Interfaces;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.dataAccess.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +48,7 @@ namespace LeaveAppManagement.webapi.Controllers
         }
 
         // POST api/<LeaveTypeController>
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> PostLeaveTypeInTableAsync([FromBody] LeaveTypeDto leaveTypeDto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -78,21 +79,25 @@ namespace LeaveAppManagement.webapi.Controllers
 
         // DELETE api/<LeaveTypeController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLeaveTypeInTableAsync(int  leaveTypeId, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteLeaveTypeInTableAsync(int id, CancellationToken cancellationToken)
         {
             try
             {
-                var leaveTypeToDelete = await _iLeaveTypeService.DeleteLeaveTypeAsyncServiceAsync(leaveTypeId, cancellationToken);
-                if (leaveTypeToDelete == false)
+                bool leaveTypeDeleted = await _iLeaveTypeService.DeleteLeaveTypeAsyncServiceAsync(id, cancellationToken);
+
+                if (!leaveTypeDeleted)
                 {
-                    return BadRequest("Cette donnnée n'existe pas !");
+                    return NotFound(new { Message = "La donnée n'existe pas." });
                 }
-                return Ok(leaveTypeToDelete);
+
+                return Ok(new { Message = "Congé supprimé avec succès." });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Loguez l'exception ou effectuez une gestion appropriée ici
+                return BadRequest(new { Message = "Une erreur s'est produite lors de la suppression du congé." });
             }
         }
+
     }
 }

@@ -52,7 +52,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
             TimeSpan difference = currentMonth - hireDate;
 
             // Obtention du nombre total de mois (approximation)
-            int totalMonths = (int)(difference.TotalDays / 30.44); // Environ 30.44 jours par mois
+            int totalMonths = (int)(difference.TotalDays / 30); // Environ 30 jours par mois
 
             // Calcul du TotaLeaveAvailable en fonction de la durée de service
             double totaLeaveAvailable = Math.Max(totalMonths * 2.5, 0); // Assure que le résultat est positif
@@ -60,15 +60,11 @@ namespace LeaveAppManagement.dataAccess.Repositories
             return totaLeaveAvailable;
         }
 
-
-
-
         public async Task<bool> CheckEmailExistsAsync(string email)
         {
             var userMail = await _dbContext.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
             return userMail != null;
         }
-
 
         public async Task<User> AddUserAsync(User user)
         {
@@ -88,7 +84,6 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 users.Email = user.Email;
                 users.HireDate = user.HireDate;
                 users.Job = user.Job;
-                //users.TotaLeaveAvailable = user.TotaLeaveAvailable;
                 users.PhoneNumber = user.PhoneNumber;
                 users.RoleId = user.RoleId;
                 _dbContext.Users.Update(users);

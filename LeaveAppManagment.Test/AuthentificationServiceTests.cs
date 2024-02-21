@@ -46,10 +46,8 @@ namespace LeaveAppManagment.Test
 
             _usersRepositoryMock.Setup(r => r.GetUsersAsync(It.IsAny<CancellationToken>()))
                                 .ReturnsAsync(new List<User> { });
-
             //_DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.RoleName)
             //                   .ReturnsAsync(new Role { RoleName = roleName });
-
             _configurationMock.Setup(c => c["Jwt:Key"]).Returns("your-secret-key");
 
             // Act
@@ -57,7 +55,6 @@ namespace LeaveAppManagment.Test
 
             // Assert
             Assert.IsNotNull(token);
-            // Ajoutez des assertions supplémentaires sur le token si nécessaire
         }
 
 

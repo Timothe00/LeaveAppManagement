@@ -1,10 +1,6 @@
 ﻿using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LeaveAppManagement.businessLogic.Interfaces
 {
@@ -14,6 +10,6 @@ namespace LeaveAppManagement.businessLogic.Interfaces
         Task<LeaveTypeDto> GetLeaveTypeByIdServiceAsync(int id, CancellationToken cancellationToken);
         Task<LeaveType> AddLeaveTypeServiceAsync(LeaveTypeDto leaveTypedto, CancellationToken cancellationToken);
         Task<LeaveType> UpdateLeaveTypeServiceAsync(LeaveTypeDto leaveTypedto, CancellationToken cancellationToken);
-        Task<bool> DeleteLeaveTypeAsyncServiceAsync(int reqId, CancellationToken cancellationToken);
+        Task<bool> DeleteLeaveTypeAsyncServiceAsync(int leaveTypeId, CancellationToken cancellationToken);
     }
 }

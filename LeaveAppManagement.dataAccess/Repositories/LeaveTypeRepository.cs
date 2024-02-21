@@ -3,8 +3,7 @@ using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading;
+
 
 namespace LeaveAppManagement.dataAccess.Repositories
 {
@@ -55,13 +54,19 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         public async Task<bool> DeleteLeaveTypeAsync(int id, CancellationToken cancellationToken)
         {
-            if (id != 0)
+            var leaveType = await _dbContext.LeaveTypes.FindAsync(id);
+
+            if (leaveType == null)
             {
-                 _dbContext.Remove(GetSingleLeaveTypeAsync(id, cancellationToken));
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                // Si l'objet n'est pas trouvé, renvoyer false
+                return false;
             }
+
+            _dbContext.LeaveTypes.Remove(leaveType);
+            await _dbContext.SaveChangesAsync();
 
             return true;
         }
+
     }
 }
