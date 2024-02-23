@@ -1,4 +1,5 @@
-﻿using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
 using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
@@ -19,63 +20,58 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
     {
         private readonly IConfiguration _configuration;
         private readonly IUsersRepository _usersRepository;
-        public readonly IRoleRepository _roleRepository;
-        private readonly LeaveAppManagementDbContext _DbContext;
+        private readonly IRoleRepository _roleRepository;
 
         public AuthentificationService(
             IUsersRepository usersRepository,
             IRoleRepository roleRepository,
-            IConfiguration configuration,
-            LeaveAppManagementDbContext DbContext
-            )
+            IConfiguration configuration)
         {
             _usersRepository = usersRepository;
             _configuration = configuration;
             _roleRepository = roleRepository;
-            _DbContext = DbContext;
         }
 
-
-
-
-        public async Task<string> Authenticate(Login userLogin, CancellationToken cancellationToken)
+        public async Task<string?> Authenticate(Login userLogin, CancellationToken cancellationToken)
         {
             IEnumerable<User> users = await _usersRepository.GetUsersAsync(cancellationToken);
 
-            User? user = users.Where(u => u.Email == userLogin.Email).FirstOrDefault();
-            if (user != null)
+            User? user = users.FirstOrDefault(u => u.Email == userLogin.Email && u.Password == EncryptPassword.HashPswd(userLogin.Password));
+
+            return await GenerateToken(user);
+        }
+
+        public async Task<string> GenerateToken(User user)
+        {
+            Role roleName = await _roleRepository.GetRoleByIdAsync(user.RoleId, CancellationToken.None);
+
+            if (roleName == null)
             {
-                if (user.Password == EncryptPassword.HashPswd(userLogin.Password))
-                {
-                    return GenerateToken(user);
-                }
                 return null;
             }
 
-            return null;
-        }
-
-        public string GenerateToken(User user)
-        {
-            string? RoleName = _DbContext.Roles.Where(r => r.Id == user.RoleId).Select(role => role.RoleName).FirstOrDefault();
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id) ),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Role ,RoleName)
+            new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id)),
+            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+            new Claim(ClaimTypes.Role, roleName?.RoleName) // Utilisation de l'opérateur null-conditional ici
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-            return new JwtSecurityTokenHandler().WriteToken(token);
+
+            return tokenString;
         }
 
     }
+
+
 }

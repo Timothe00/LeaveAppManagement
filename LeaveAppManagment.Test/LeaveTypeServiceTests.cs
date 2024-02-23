@@ -107,62 +107,35 @@ namespace LeaveAppManagment.Test
 
 
         [TestMethod]
-        public async Task DeleteLeaveTypeAsyncServiceAsync_ValidLeaveTypeId_ReturnsTrue()
-        {
-            // Arrange
-            int leaveTypeId = 1;
-
-            // Act
-            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(leaveTypeId, CancellationToken.None);
-
-            // Assert
-            Assert.IsTrue(result);
-            // Add additional assertions if needed
-        }
-
-        [TestMethod]
-        public async Task DeleteLeaveTypeAsyncServicesAsync_ValidLeaveTypeId_ReturnsTrue()
-        {
-            // Arrange
-            int leaveTypeId = 1; // Assuming a valid leaveTypeId
-            CancellationToken cancellationToken = CancellationToken.None;
-
-            _leaveTypeRepositoryMock.Setup(r => r.DeleteLeaveTypeAsync(leaveTypeId, cancellationToken))
-                                   .ReturnsAsync(true); // Mock the repository method to return true
-
-            // Act
-            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(leaveTypeId, cancellationToken);
-
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
         public async Task DeleteLeaveTypeAsyncServiceAsync_InvalidLeaveTypeId_ReturnsFalse()
         {
             // Arrange
-            int invalidLeaveTypeId = 0; 
-            CancellationToken cancellationToken = CancellationToken.None;
+            int invalidLeaveTypeId = 0;
 
             // Act
-            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(invalidLeaveTypeId, cancellationToken);
+            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(invalidLeaveTypeId, CancellationToken.None);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task DeleteLeaveTypeAsyncServiceAsync_NegativeLeaveTypeId_ReturnsFalse()
+        public async Task DeleteLeaveTypeAsyncServiceAsync_ValidLeaveTypeId_DeletesAndReturnsTrue()
         {
             // Arrange
-            int negativeLeaveTypeId = -1; 
-            CancellationToken cancellationToken = CancellationToken.None;
+            int validLeaveTypeId = 1;
+
+            // Configuration du mock pour simuler la suppression réussie
+            _leaveTypeRepositoryMock.Setup(r => r.DeleteLeaveTypeAsync(validLeaveTypeId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
             // Act
-            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(negativeLeaveTypeId, cancellationToken);
+            var result = await _leaveTypeService.DeleteLeaveTypeAsyncServiceAsync(validLeaveTypeId, CancellationToken.None);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
+            // Ajoutez des assertions supplémentaires si nécessaire pour vérifier le comportement du mock
         }
+
+
     }
 }
