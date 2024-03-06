@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using LeaveAppManagement.businessLogic.Interfaces;
+﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Interfaces.EmailModelService;
 using LeaveAppManagement.dataAccess.Models;
 using MailKit.Net.Smtp;
@@ -56,13 +55,18 @@ namespace LeaveAppManagement.businessLogic.Services
         {
             var emailMessage = new MimeMessage();
             var user = await _usersService.GetUserServiceByIdAsync(id, cancellationToken);
-            var mail = user.Email;
-            var name = $"{user.FirstName} {user.LastName}";
-            var from = new MailboxAddress(name, mail);
+            var managers = await _usersService.GetManagersServiceAsync(cancellationToken);
 
-            var to = _config["EmailSettings:From"];
+            var from = new MailboxAddress($"{user.FirstName} {user.LastName}", user.Email);
+
             emailMessage.From.Add(from);
-            emailMessage.To.Add(new MailboxAddress("InFi SoFware", to));
+
+            foreach (var manager in managers)
+            {
+                var to = new MailboxAddress($"{manager.FirstName} {manager.LastName}", manager.Email);
+                emailMessage.To.Add(to);
+            }
+
             emailMessage.Subject = emailModel.Subject;
 
             // Ajoutez l'adresse e-mail de l'expéditeur dans le champ "Reply-To"
@@ -89,10 +93,10 @@ namespace LeaveAppManagement.businessLogic.Services
                 finally
                 {
                     await client.DisconnectAsync(true);
-                    client.Dispose();
                 }
             }
         }
+
 
     }
 }

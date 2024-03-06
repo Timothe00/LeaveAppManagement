@@ -1,5 +1,4 @@
 ﻿
-
 using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.dataAccess.Dto;
@@ -273,6 +272,114 @@ namespace LeaveAppManagment.Test
             // Assert
             Assert.IsTrue(result);
 
+        }
+
+        [TestMethod]
+        public async Task GetManagersServiceAsync_ReturnsManagersDto()
+        {
+            // Arrange
+
+            var cancellationToken = CancellationToken.None;
+
+            // Création d'une liste fictive de managers
+            var managers = new List<User>
+        {
+
+            new Manager
+            {
+                Id = 1,
+                FirstName = "Manager1",
+                LastName = "Manager1LastName",
+                Email = "manager1@example.com",
+                RoleId = 2,
+                // Autres propriétés
+            },
+            new Manager
+            {
+                Id = 2,
+                FirstName = "Manager2",
+                LastName = "Manager2LastName",
+                Email = "manager2@example.com",
+                RoleId = 2,
+                // Autres propriétés
+            }
+        };
+
+            // Configuration du mock pour renvoyer la liste fictive de managers
+            _usersRepositoryMock.Setup(r => r.GetUsersByRoleIdAsync(2, cancellationToken)).ReturnsAsync(managers);
+
+            // Act
+            var result = await _usersService.GetManagersServiceAsync(cancellationToken);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(IEnumerable<UsersDto>));
+
+            // Vérifions si la liste contient les managers attendus
+            var resultList = result.ToList();
+
+            Assert.AreEqual(managers.Count, resultList.Count);
+
+            for (int i = 0; i < managers.Count; i++)
+            {
+                var expectedManager = managers[i];
+                var actualManager = resultList[i];
+
+                Assert.AreEqual(expectedManager.Id, actualManager.Id);
+                Assert.AreEqual(expectedManager.FirstName, actualManager.FirstName);
+                Assert.AreEqual(expectedManager.LastName, actualManager.LastName);
+                Assert.AreEqual(expectedManager.Email, actualManager.Email);
+            }
+        }
+
+
+        [TestMethod]
+        public async Task GetSingleManagerServiceAsync_ReturnsSingleManagerDto()
+        {
+            // Arrange
+            var cancellationToken = CancellationToken.None;
+
+            // Créez un manager fictif
+            var manager = new Manager
+            {
+                Id = 1,
+                FirstName = "Manager1",
+                LastName = "Manager1LastName",
+                Email = "manager1@example.com",
+                RoleId = 2,
+            };
+
+            // Configuration du mock pour renvoyer le manager fictif
+            _usersRepositoryMock.Setup(r => r.GetSingleManagerByRoleIdAsync(2, cancellationToken)).ReturnsAsync(manager);
+
+            // Act
+            var result = await _usersService.GetSingleManagerServiceAsync(cancellationToken);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(UsersDto));
+
+            // Vérifions si les propriétés du manager correspondent à celles de UsersDto
+            Assert.AreEqual(manager.Id, result.Id);
+            Assert.AreEqual(manager.FirstName, result.FirstName);
+            Assert.AreEqual(manager.LastName, result.LastName);
+            Assert.AreEqual(manager.Email, result.Email);
+        }
+
+        [TestMethod]
+        public async Task GetSingleManagerServiceAsync_NoManagerFound_ReturnsNull()
+        {
+            // Arrange
+            var cancellationToken = CancellationToken.None;
+
+            // Configuration du mock pour renvoyer null (aucun manager trouvé)
+            _usersRepositoryMock.Setup(r => r.GetSingleManagerByRoleIdAsync(2, cancellationToken)).ReturnsAsync((Manager)null);
+
+            // Act
+            var result = await _usersService.GetSingleManagerServiceAsync(cancellationToken);
+
+            // Assert
+            Assert.IsNull(result);
         }
 
 

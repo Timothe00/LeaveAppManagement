@@ -55,7 +55,7 @@ namespace LeaveAppManagement.Tests.Services.AuthService
         }
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         public async Task Authenticate_ShouldReturnNull_WhenInvalidCredentialsAreProvided()
         {
             // Arrange

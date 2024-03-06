@@ -82,6 +82,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("RequestStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -90,6 +93,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("LeaveTypeId");
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("LeaveRequests");
                 });
@@ -241,6 +246,10 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", null)
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("ManagerId");
+
                     b.Navigation("Employee");
 
                     b.Navigation("LeaveType");
@@ -273,6 +282,11 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
+                {
+                    b.Navigation("LeaveRequests");
+                });
+
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
                 {
                     b.Navigation("LeaveRequests");
                 });

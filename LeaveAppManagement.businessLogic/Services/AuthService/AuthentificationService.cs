@@ -1,14 +1,11 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
+﻿using LeaveAppManagement.businessLogic.Interfaces.AuthInterface;
 using LeaveAppManagement.businessLogic.Utility;
-using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using LeaveAppManagement.dataAccess.Models.Authentification;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -43,6 +40,11 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
 
         public async Task<string> GenerateToken(User user)
         {
+            if (user == null)
+            {
+                return null;
+            }
+
             Role roleName = await _roleRepository.GetRoleByIdAsync(user.RoleId, CancellationToken.None);
 
             if (roleName == null)
@@ -59,9 +61,9 @@ namespace LeaveAppManagement.businessLogic.Services.AuthService
                 {
             new Claim(ClaimTypes.PrimarySid, Convert.ToString(user.Id)),
             new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-            new Claim(ClaimTypes.Role, roleName?.RoleName) // Utilisation de l'opérateur null-conditional ici
+            new Claim(ClaimTypes.Role, roleName?.RoleName) 
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

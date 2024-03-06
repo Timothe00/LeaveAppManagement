@@ -4,6 +4,7 @@ using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -44,6 +45,18 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
             return usersWithRoleNames;
         }
+
+        //obtenir les utilisateurs en fonction de leur role
+        public async Task<IEnumerable<User>> GetUsersByRoleIdAsync(int roleId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users.Where(u => u.RoleId == roleId).ToListAsync(cancellationToken);
+        }
+
+        public async Task<User?> GetSingleManagerByRoleIdAsync(int roleId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.RoleId == roleId, cancellationToken);
+        }
+
 
         // Méthode pour calculer le TotaLeaveAvailable en fonction de la durée de service
         private static double CalculateTotaLeaveAvailable(DateTime hireDate, DateTime currentMonth)

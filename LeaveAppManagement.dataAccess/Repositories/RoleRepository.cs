@@ -1,5 +1,4 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
-using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         public async Task<Role> GetRoleByIdAsync(int roleId, CancellationToken cancellationToken)
         {
-            Role role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == roleId, cancellationToken);
+            Role? role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == roleId, cancellationToken);
             return role;
         }
 

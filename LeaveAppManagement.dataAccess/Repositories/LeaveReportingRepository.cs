@@ -62,7 +62,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
         //Cette méthode retourne le nombre total de demandes de congé Acceptée pour tous les utilisateurs
         public async Task<int> GetTotalAcceptedLeaveAsync(CancellationToken cancellationToken)
         {
-            return await _dbContext.LeaveRequests.CountAsync(l => l.RequestStatus == "Accepted", cancellationToken);
+            return await _dbContext.LeaveRequests.CountAsync(l => l.RequestStatus == "Acceptée", cancellationToken);
         }
 
         //Cette méthode retourne le nombre total de demandes de congé Acceptée pour un utilisateur spécifique
@@ -70,13 +70,13 @@ namespace LeaveAppManagement.dataAccess.Repositories
         {
             return await _dbContext.LeaveRequests
                 .Where(la => la.EmployeeId == userId)
-                .CountAsync(l => l.RequestStatus == "Accepted", cancellationToken);
+                .CountAsync(l => l.RequestStatus == "Acceptée", cancellationToken);
         }
 
         //Cette méthode retourne le nombre total de demandes de congé Rejetée pour tous les utilisateurs
         public async Task<int> GetTotalRejectedLeaveAsync(CancellationToken cancellationToken)
         {
-            return await _dbContext.LeaveRequests.CountAsync(l => l.RequestStatus == "Rejected", cancellationToken);
+            return await _dbContext.LeaveRequests.CountAsync(l => l.RequestStatus == "Rejetée", cancellationToken);
         }
 
         //Cette méthode retourne le nombre total de demandes de congé rejetée pour un utilisateur spécifique
@@ -84,7 +84,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
         {
             return await _dbContext.LeaveRequests
                 .Where(lr => lr.EmployeeId == userId)
-                .CountAsync(l => l.RequestStatus == "Rejected", cancellationToken);
+                .CountAsync(l => l.RequestStatus == "Rejetée", cancellationToken);
         }
 
 

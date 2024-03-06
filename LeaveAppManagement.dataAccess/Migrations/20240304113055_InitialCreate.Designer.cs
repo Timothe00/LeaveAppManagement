@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeaveAppManagement.dataAccess.Migrations
 {
     [DbContext(typeof(LeaveAppManagementDbContext))]
-    [Migration("20240207143551_InitialCreate")]
+    [Migration("20240304113055_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -73,9 +73,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DateRequest")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateRequest")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
@@ -86,6 +85,9 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("RequestStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -94,6 +96,8 @@ namespace LeaveAppManagement.dataAccess.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("LeaveTypeId");
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("LeaveRequests");
                 });
@@ -245,6 +249,10 @@ namespace LeaveAppManagement.dataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LeaveAppManagement.dataAccess.Models.Manager", null)
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("ManagerId");
+
                     b.Navigation("Employee");
 
                     b.Navigation("LeaveType");
@@ -277,6 +285,11 @@ namespace LeaveAppManagement.dataAccess.Migrations
                 });
 
             modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Employee", b =>
+                {
+                    b.Navigation("LeaveRequests");
+                });
+
+            modelBuilder.Entity("LeaveAppManagement.dataAccess.Models.Manager", b =>
                 {
                     b.Navigation("LeaveRequests");
                 });

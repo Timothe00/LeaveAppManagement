@@ -22,7 +22,7 @@ namespace LeaveAppManagement.webapi.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] Login userLogin, CancellationToken cancellationToken)
         {
-            string token = await _iAuthentificationService.Authenticate(userLogin, cancellationToken);
+            string? token = await _iAuthentificationService.Authenticate(userLogin, cancellationToken);
             if (token != null)
             {
                 return Ok(new

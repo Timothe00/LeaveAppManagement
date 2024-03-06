@@ -1,6 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Interfaces.EmailModelService;
+using LeaveAppManagement.businessLogic.Services;
 using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Models;
@@ -16,11 +18,13 @@ namespace LeaveAppManagement.webapi.Controllers
     {
         private readonly ILeaveRequestService _iLeaveRequestService;
         private readonly IEmailModelService _emailModelService;
+        private readonly IUsersService _usersService;
 
-        public LeaveRequestController(ILeaveRequestService iLeaveRequestService, IEmailModelService emailModelService)
+        public LeaveRequestController(ILeaveRequestService iLeaveRequestService, IEmailModelService emailModelService, IUsersService usersService)
         {
             _iLeaveRequestService = iLeaveRequestService;
             _emailModelService = emailModelService;
+            _usersService = usersService;
         }
         // GET: api/<LeaveRequestController>
         [HttpGet]
@@ -71,8 +75,10 @@ namespace LeaveAppManagement.webapi.Controllers
                 try
                 {
                     var req = await _iLeaveRequestService.AddLeaveRequestServiceAsync(leaveRequestDto, cancellationToken);
+
                     // Appel de la méthode SendEmailToConfirm
-                    var emailModel = new EmailModel("yaofrancistimothee@gmail.com", "Demande de congé en attente de confirmation", EmailBody.EmailNotificationBody());
+                    var manager = await _usersService.GetSingleManagerServiceAsync(cancellationToken);
+                    var emailModel = new EmailModel(manager.Email, "Demande de congé en attente de confirmation", EmailBody.EmailNotificationBody());
                     await _emailModelService.SendEmailToConfirm(emailModel, req.EmployeeId, cancellationToken);
                     return Ok(req);
                 }

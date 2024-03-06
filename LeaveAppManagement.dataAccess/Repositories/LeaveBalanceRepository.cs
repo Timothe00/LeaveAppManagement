@@ -1,7 +1,6 @@
 ﻿using LeaveAppManagement.dataAccess.Data;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
-using LeaveAppManagement.dataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveAppManagement.dataAccess.Repositories
@@ -9,25 +8,20 @@ namespace LeaveAppManagement.dataAccess.Repositories
     public class LeaveBalanceRepository : ILeaveBalanceRepository
     {
         private readonly LeaveAppManagementDbContext _dbContext;
-        //private readonly ILeaveReportingRepository _leaveReportingRepository;
-
         public LeaveBalanceRepository(LeaveAppManagementDbContext dbContext)
         {
             _dbContext = dbContext;
-            //_leaveReportingRepository = leaveReportingRepository;
         }
-
-
 
         public async Task<IEnumerable<LeaveBalanceDto>> GetAllLeaveBalanceForAllEmployeeAsync(CancellationToken cancellationToken)
         {
             // Récupération des données de la base de données de manière asynchrone
             var leaveRequests = await _dbContext.LeaveRequests
-                .Where(lr => lr.RequestStatus == "Accepted")
+                .Where(lr => lr.RequestStatus == "Acceptée")
                 .ToListAsync(cancellationToken);
 
             var users = await _dbContext.Users
-                .Where(u => u.RoleId == 3) // Filtrez les utilisateurs par le rôle approprié
+                .Where(u => u.RoleId == 2 || u.RoleId == 3) // Filtrez les utilisateurs par le rôle approprié
                 .ToListAsync(cancellationToken);
 
             // Agrégation des informations pour chaque utilisateur
@@ -65,9 +59,8 @@ namespace LeaveAppManagement.dataAccess.Repositories
 
         private static double CalculateTotaLeaveAvailable(DateTime hireDate)
         {
-            var difference = (DateTime.Now - hireDate).Days / 30.0;
-
-            double totaLeaveDaysAvailable = Math.Ceiling(difference) * 2.5; //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
+            var numberOfMonthElapsedSinceHireDate = (DateTime.Now - hireDate).Days / 30.0;
+            double totaLeaveDaysAvailable = Math.Ceiling(numberOfMonthElapsedSinceHireDate) * 2.5; //2.5 est le nombre de jour de congé par mois par defaut selon l'entreprise
             return totaLeaveDaysAvailable;
         }
 
@@ -75,16 +68,14 @@ namespace LeaveAppManagement.dataAccess.Repositories
         {
             // Récupération des données de la base de données de manière asynchrone
             var leaveRequests = await _dbContext.LeaveRequests
-                .Where(lr => lr.RequestStatus == "Accepted" && lr.EmployeeId == employeeId)
+                .Where(lr => lr.RequestStatus == "Acceptée" && lr.EmployeeId == employeeId)
                 .ToListAsync(cancellationToken);
-
             var acceptedLeaveDates = leaveRequests
                 .SelectMany(lr => Enumerable.Range(0, (int)(lr.DateEnd - lr.DateStart).TotalDays)
                 .Select(offset => lr.DateStart.AddDays(offset)))
                 .ToList();  // Convertir en liste côté client
-
             var user = await _dbContext.Users
-                .Where(u => u.Id == employeeId && u.RoleId == 3)
+                .Where(u => u.Id == employeeId && u.RoleId == 2 || u.RoleId == 3)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
@@ -92,15 +83,11 @@ namespace LeaveAppManagement.dataAccess.Repositories
                 // Gérer le cas où l'utilisateur n'est pas trouvé
                 return null; // Ou lancez une exception appropriée selon votre logique
             }
-
             // Calculer le total des jours acceptés
             int totalLeaveDays = acceptedLeaveDates.Count;
-
             // Obtenir l'année d'embauche
             var hireYear = user.HireDate;
-
             var monthsOfWork = (DateTime.Now - hireYear).Days / 30;
-
             // Créer un objet LeaveBalanceDto pour chaque utilisateur
             var leaveBalanceDto = new LeaveBalanceDto
             {

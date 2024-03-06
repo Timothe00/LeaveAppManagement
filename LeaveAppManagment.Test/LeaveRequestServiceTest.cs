@@ -146,7 +146,7 @@ namespace LeaveAppManagment.Test
             var requestStatusDto = new RequestStatusDto
             {
                 Id = 1,
-                RequestStatus = "Approved"
+                RequestStatus = "Acceptée"
                 // Ajouter d'autres propriétés au besoin
             };
 
@@ -156,7 +156,7 @@ namespace LeaveAppManagment.Test
             var originalLeaveRequest = new LeaveRequestDto
             {
                 Id = requestStatusDto.Id,
-                RequestStatus = "Pending"
+                RequestStatus = "En attente"
             };
 
             // Configuration du mock pour retourner l'objet LeaveRequest simulé avant la mise à jour du statut

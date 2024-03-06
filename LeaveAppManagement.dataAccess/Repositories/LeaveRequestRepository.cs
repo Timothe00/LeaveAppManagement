@@ -19,7 +19,7 @@ namespace LeaveAppManagement.dataAccess.Repositories
         public async Task<IEnumerable<LeaveRequestDto>> GetLeaveRequestAsync(CancellationToken cancellationToken)
         {
             var leaveRequests = await _dbContext.LeaveRequests.ToListAsync(cancellationToken);
-            var users = await _dbContext.Users.Where(user => user.RoleId == 3).ToListAsync(cancellationToken);
+            var users = await _dbContext.Users.Where(user => user.RoleId == 2 || user.RoleId == 3).ToListAsync(cancellationToken);
             var leaveTypes = await _dbContext.LeaveTypes.ToListAsync(cancellationToken);
 
             var EmployeeReq = from leave in leaveRequests

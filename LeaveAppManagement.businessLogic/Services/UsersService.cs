@@ -1,10 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using LeaveAppManagement.businessLogic.Interfaces;
+﻿using LeaveAppManagement.businessLogic.Interfaces;
 using LeaveAppManagement.businessLogic.Utility;
 using LeaveAppManagement.dataAccess.Dto;
 using LeaveAppManagement.dataAccess.Interfaces;
 using LeaveAppManagement.dataAccess.Models;
-using LeaveAppManagement.dataAccess.Repositories;
+
 
 
 namespace LeaveAppManagement.businessLogic.Services
@@ -22,11 +21,11 @@ namespace LeaveAppManagement.businessLogic.Services
         public async Task<User?> AddUsersServiceAsync(CreateUserDto usersDto)
         {
 
-            // Check if the email exists in the database
+            // Vérifiez si l'e-mail existe dans la base de données
             var emailExists = await _usersRepository.CheckEmailExistsAsync(usersDto.Email);
             if (emailExists)
             {
-                return null; // Email already exists
+                return null; // L'email existe déjà
             }
 
 
@@ -53,7 +52,6 @@ namespace LeaveAppManagement.businessLogic.Services
             user.Password = EncryptPassword.HashPswd(usersDto.Password);
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
-            //user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.RoleId = usersDto.RoleId;
             user.HireDate = usersDto.HireDate;
 
@@ -93,7 +91,6 @@ namespace LeaveAppManagement.businessLogic.Services
             user.HireDate = usersDto.HireDate;
             user.PhoneNumber = usersDto.PhoneNumber;
             user.Job = usersDto.Job;
-           // user.TotaLeaveAvailable = usersDto.TotaLeaveAvailable;
             user.RoleId = usersDto.RoleId;
             await _usersRepository.UpdateUserAsync(user, cancellationToken);
             return user;
@@ -181,6 +178,35 @@ namespace LeaveAppManagement.businessLogic.Services
             };
             return usersDto;
         }
+
+        //recuperer tout les managers
+        private enum UserRoles { Admin = 1, Manager, Employee }
+        public async Task<IEnumerable<UsersDto>> GetManagersServiceAsync(CancellationToken cancellationToken)
+        {
+            IEnumerable<User> managers = await _usersRepository.GetUsersByRoleIdAsync((int)UserRoles.Manager, cancellationToken);
+            var currentMonth = DateTime.Now.Month;
+
+            IEnumerable<UsersDto> managersDto = managers.Select(u => MapUserToDto(u, currentMonth));
+
+            return managersDto;
+        }
+
+        public async Task<UsersDto?> GetSingleManagerServiceAsync(CancellationToken cancellationToken)
+        {
+            User? manager = await _usersRepository.GetSingleManagerByRoleIdAsync((int)UserRoles.Manager, cancellationToken);
+
+            if (manager != null)
+            {
+                var currentMonth = DateTime.Now.Month;
+                return MapUserToDto(manager, currentMonth);
+            }
+            else
+            {
+                return null; // Aucun manager trouvé
+            }
+        }
+
+
 
 
     }

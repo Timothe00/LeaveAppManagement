@@ -7,6 +7,8 @@ namespace LeaveAppManagement.businessLogic.Interfaces
     {
         Task<IEnumerable<UsersDto>> GetUserServiceAsync(CancellationToken cancellationToken);
         Task<UsersDto> GetUserServiceByIdAsync(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<UsersDto>> GetManagersServiceAsync(CancellationToken cancellationToken);
+        Task<UsersDto?> GetSingleManagerServiceAsync(CancellationToken cancellationToken);
         Task<User?> AddUsersServiceAsync(CreateUserDto usersDto);
         Task<User?> UpdateUserServiceAsync(UpdateUserDto usersDto, CancellationToken cancellationToken);
         Task<User> UserPasswordchangeServiceAsync(UserPasswordUpdateDto userpasswordupdateDto, CancellationToken cancellationToken);
