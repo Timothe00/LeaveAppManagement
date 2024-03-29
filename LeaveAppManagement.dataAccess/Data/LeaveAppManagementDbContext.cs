@@ -18,12 +18,6 @@ namespace LeaveAppManagement.dataAccess.Data
 
         public LeaveAppManagementDbContext(DbContextOptions<LeaveAppManagementDbContext> options) : base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder.UseSqlServer("Server=DESKTOP-1MJGFMU;Database=LeaveManagementDb;Trusted_Connection=True;Encrypt=false;");
-            optionsBuilder.UseSqlServer("Server=DESKTOP-1LD6C3B\\SQLEXPRESS;Database=DbTest;Trusted_Connection=True;Encrypt=false;");
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
